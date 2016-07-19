@@ -32,8 +32,8 @@ CC_OPTS         = $(INCLUDE_PATHS) $(CC_DFLAGS)
 OA_TC_OPTS      = $(INCLUDE_PATHS) $(CC_DFLAGS)
 OA_HC_OPTS      = $(INCLUDE_PATHS) $(CC_DFLAGS) $(CC_ARM_OPTS) -Wall -Wextra -fopenmp -ffast-math
 
-OA_TL_OPTS      = -lm -loam
-OA_HL_OPTS      = -lm -loam
+OA_TL_OPTS      = -lm -l:liboam.a
+OA_HL_OPTS      = -lm -l:liboam.a
 
 OA_SHELL_OPTS   = $(OA_SHELL_FLAGS) --hc="$(OA_HC_OPTS)" --tc="$(OA_TC_OPTS)" --hl="$(OA_HL_OPTS)" --tl="$(OA_TL_OPTS)"
 
@@ -58,7 +58,9 @@ $(BASE_OAM_LIB):
 	$(CC) $(CC_OPTS) -c $<
 
 deploy: $(EXE)
-	@scp $(EXE) evm:~/run/comm_async/
+	sudo mkdir -p $(HOME)/targetNFS/home/root/run/
+	sudo cp $(EXE) $(HOME)/targetNFS/home/root/run/
+	scp $(EXE) evm:~/run/
 
 clean:
 	@rm -f $(EXE) $(BASE_OAM_LIB) $(OA_SHELL_TMP_FILES) *.log

@@ -1,12 +1,12 @@
 
 #include "minimal_target.h"
 
-#include <base/config.h>
-#include <base/types.h>
-#include <base/macro.h>
-#include <base/logging.h>
-
+#include <base/oam_config.h>
+#include <base/oam_types.h>
 #include <base/oam_task.h>
+#include <base/oam_task_target.h>
+#include <base/logging.h>
+#include <base/macro.h>
 
 /* ======================================================================== *
  * Begin of Target Function Declarations and Includes                       *
@@ -18,6 +18,10 @@
 #include <omp.h>
 
 #include "ti_omp_device.h"
+
+static inline int add_static(int a, int b) {
+  return a + b;
+}
 
 #pragma omp end declare target
 /* ------------------------------------------------------------------------ *
@@ -38,7 +42,7 @@ int target_function(
                           map(from:   out_buffer[0:size], acc) \
                           map(tofrom: host_signals[0:1])
   {
-    oam_task__start(host_signals);
+    oam_task__enter(host_signals);
 
     if (!oam_task__aborted(host_signals)) {
       #pragma omp target map(to:     in_buffer[0:size], size) \
@@ -57,14 +61,16 @@ int target_function(
         {
           int aborted = 0;
           // Poll cancellation request:
-          if (!oam_task__poll_aborted(time_start, host_signals, &aborted)) {
+          if (0 == oam_task__poll_cancel_request(
+                     time_start, host_signals, &aborted)) {
             // Work step implementation here
-            out_buffer[0] = in_buffer[0];
+            out_buffer[0] = add_static(in_buffer[0], 100);
             // ...
           }
-          if (!oam_task__poll_aborted(time_start, host_signals, &aborted)) {
+          if (0 == oam_task__poll_cancel_request(
+                     time_start, host_signals, &aborted)) {
             // Work step implementation here
-            out_buffer[0] = in_buffer[0];
+            out_buffer[0] = add_static(in_buffer[0], 100);
             // ...
           }
           #pragma omp atomic
@@ -93,14 +99,16 @@ int target_function(
         {
           int aborted = 0;
           // Poll cancellation request:
-          if (!oam_task__poll_aborted(time_start, host_signals, &aborted)) {
+          if (0 == oam_task__poll_cancel_request(
+                     time_start, host_signals, &aborted)) {
             // Work step implementation here
-            out_buffer[0] = in_buffer[0];
+            out_buffer[0] = add_static(in_buffer[0], 100);
             // ...
           }
-          if (!oam_task__poll_aborted(time_start, host_signals, &aborted)) {
+          if (0 == oam_task__poll_cancel_request(
+                     time_start, host_signals, &aborted)) {
             // Work step implementation here
-            out_buffer[0] = in_buffer[0];
+            out_buffer[0] = add_static(in_buffer[0], 100);
             // ...
           }
           #pragma omp atomic

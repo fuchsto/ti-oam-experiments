@@ -11,10 +11,11 @@
 
 #include <omp.h>
 
-#include <base/types.h>
-#include <base/symmetric_memory.h>
-#include <base/timestamp.h>
+#include <base/oam_types.h>
+#include <base/oam_vsmem.h>
+#include <base/oam_time.h>
 #include <base/oam_task.h>
+#include <base/oam_comm.h>
 
 #include "minimal_target.h"
 
@@ -37,6 +38,7 @@ int computation_at_host(int size)
       result += (i * result) % 11;
     }
   }
+  return result;
 }
 
 int main(int argc, char *argv[])
@@ -78,15 +80,15 @@ int main(int argc, char *argv[])
             << static_cast<double>(2 * array_size) / 1024 / 1024 << " MB)"
             << std::endl;
 
-  char * array_a = (char *)(symmetric_malloc(array_size));
-  char * array_b = (char *)(symmetric_malloc(array_size));
+  char * array_a = (char *)(oam_vsmem__symmetric_malloc(array_size));
+  char * array_b = (char *)(oam_vsmem__symmetric_malloc(array_size));
 
   for (int i = 0; i < array_size; i++) {
     array_a[i] = (char)(i % 32);
     array_b[i] = 0;
   }
 
-  HostMessage * host_signals = oam_task__host_signals_new(
+  HostMessage * host_signals = oam_comm__host_signals_new(
                                  poll_interval_ms,
                                  timeout_after_ms);
 
@@ -97,8 +99,6 @@ int main(int argc, char *argv[])
   /* Kernel execution time in single repeats for median and stddev: */
   std::vector<double> target_durations;
   std::future<int>    target_future;
-
-  ts_t target_start = timestamp();
 
   target_future = std::async(std::launch::async,
                              target_function,
@@ -138,10 +138,10 @@ int main(int argc, char *argv[])
    * Finalize:                                                              *
    * ---------------------------------------------------------------------- */
 
-  symmetric_free(array_a);
-  symmetric_free(array_b);
+  oam_vsmem__symmetric_free(array_a);
+  oam_vsmem__symmetric_free(array_b);
 
-  oam_task__host_signals_delete(host_signals);
+  oam_comm__host_signals_delete(host_signals);
 
   return EXIT_SUCCESS;
 }

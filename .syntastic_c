@@ -1,0 +1,15 @@
+-std=c99
+-I/opt/ti-processor-sdk-linux-am57xx-evm-02.00.02.11/targetNFS/usr/include
+-I/opt/ti-processor-sdk-linux-am57xx-evm-02.00.02.11/targetNFS/usr/share/ti/openmpacc/dsp/include
+-I/home/fuchsto/ti-oam-experiments.git/base/_inc/
+-DPCPROTO
+-Wall
+#-pedantic
+#-Wextra
+-fopenmp
+-lm
+-D__ARM_PCS_VFP
+-DENABLE_LOGGING
+-DDEBUG
+-DSYNTASTIC_CHECK
+

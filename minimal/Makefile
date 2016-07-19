@@ -11,7 +11,8 @@ else
 endif
 
 OA_SHELL_FLAGS  = $(OA_SHELL_VERBOSE_OPTS) $(OA_SHELL_DEBUG_OPTS)
-INCLUDE_PATHS   = -I$(PWD)/include
+INCLUDE_PATHS   = -I$(PWD)/include -I../base/_inc/
+LIBRARY_PATHS   = -L$(PWD)../base/_lib
 
 CL                    = cl6x $(INCLUDE_PATHS)
 OA_SHELL              = clacc
@@ -20,9 +21,7 @@ CC		                = arm-linux-gnueabihf-gcc
 OA_SHELL_TMP_FILES    = *.out __TI_CLACC_KERNEL.c *.cl *.asm *.dsp_h \
                         *.bc *.objc *.if *.map *.opt *.int.c *.o *.obj
 
-# temporary workaround for locale bug
-LC_ALL?=C
-export LC_ALL
+export LC_ALL=C
 
 CC_ARM_OPTS     = -march=armv7-a -mtune=cortex-a15 -mfloat-abi=hard -mfpu=vfp
 
@@ -32,18 +31,26 @@ CC_OPTS         = $(INCLUDE_PATHS) $(CC_DFLAGS)
 OA_TC_OPTS      = $(INCLUDE_PATHS) $(CC_DFLAGS)
 OA_HC_OPTS      = $(INCLUDE_PATHS) $(CC_DFLAGS) $(CC_ARM_OPTS) -Wall -Wextra -fopenmp -ffast-math
 
-OA_TL_OPTS      = -lm
-OA_HL_OPTS      = -lm
+OA_TL_OPTS			= $(LIBRARY_PATHS) -l:liboam.a
+OA_HL_OPTS			= $(LIBRARY_PATHS) -l:liboam.a
 
 OA_SHELL_OPTS   = $(OA_SHELL_FLAGS) --hc="$(OA_HC_OPTS)" --tc="$(OA_TC_OPTS)" --hl="$(OA_HL_OPTS)" --tl="$(OA_TL_OPTS)"
+
+BASE_OAM_LIB		= liboam.a
 
 EXE         = minimal.bin
 HOST_CODE   = minimal_main.cpp
 TARGET_CODE = minimal_target.c
 OBJS        = $(patsubst %.cpp, %.o, $(HOST_CODE))
 
-$(EXE): $(OBJS)
-	$(OA_SHELL) $(OA_SHELL_OPTS) $(OBJS) $(TARGET_CODE) -o $@
+all: $(EXE)
+
+$(BASE_OAM_LIB):
+	$(MAKE) -C ../base
+	@cp ../base/_lib/*.a .
+
+$(EXE): $(OBJS) $(BASE_OAM_LIB)
+	$(OA_SHELL) $(OA_SHELL_OPTS) $(OBJS) $(BASE_OAM_LIB) $(TARGET_CODE) -o $@
 
 %.o: %.cpp
 	$(CPP) $(CPP_OPTS) -c $<

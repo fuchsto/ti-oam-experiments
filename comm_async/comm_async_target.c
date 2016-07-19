@@ -57,7 +57,7 @@ int async_target(
                          repeats, host_signals);
       /* Send progress events after every 10%: */
       if (i % (repeat / 10) == (int)(__core_num())) {
-        oam_task__step(host_signals);
+//      oam_task__step(host_signals);
         printf("[ %.3fs ] ++ section: %d / %d, acc:%d, param:%d\n",
                omp_get_wtime(), i, repeat-1, acc,
                host_signals->param);
