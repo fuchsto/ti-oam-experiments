@@ -1,0 +1,35 @@
+*~
+*.swp
+*.swo
+*.o
+*.a
+*.so
+*.exe
+
+# XCC specific
+
+*.obj
+*.tmp
+*.out
+*.if
+*.opt
+*.bc
+*.objc
+*.map
+*.bin
+*.dsp_h
+
+tags
+*.orig
+
+*.dep
+
+*.cl
+
+*/.metadata
+
+# Project binaries
+
+*.int.c
+__TI_CLACC_KERNEL*
+
