@@ -1,15 +1,7 @@
 -std=c++11
 -I/opt/ti-processor-sdk-linux-am57xx-evm-02.00.02.11/targetNFS/usr/include
 -I/opt/ti-processor-sdk-linux-am57xx-evm-02.00.02.11/targetNFS/usr/share/ti/openmpacc/dsp/include
--I/home/fuchsto/workspaces/sieka.git/CCS/example-applications/openmpacc-examples-1.3.1.1/dotcode
--I/home/fuchsto/workspaces/sieka.git/CCS/example-applications/openmpacc-examples-1.3.1.1/dotcode/_inc
--I/home/fuchsto/workspaces/sieka.git/CCS/example-applications/openmpacc-examples-1.3.1.1/dotcode/port/_inc
--I/home/fuchsto/workspaces/sieka.git/CCS/example-applications/openmpacc-examples-1.3.1.1/dotcode/basefw/_inc
--I/home/fuchsto/workspaces/sieka.git/CCS/example-applications/openmpacc-examples-1.3.1.1/dotcode/portlx/_inc
--I/home/fuchsto/workspaces/sieka.git/CCS/example-applications/openmpacc-examples-1.3.1.1/dotcode/common/_inc
--I/home/fuchsto/workspaces/sieka.git/CCS/example-applications/openmpacc-examples-1.3.1.1/dotcode/vs130/_inc
--I/home/fuchsto/workspaces/sieka.git/CCS/example-applications/openmpacc-examples-1.3.1.1/dotcode/vs130/binaryImageLib/_inc
--I/home/fuchsto/workspaces/sieka.git/CCS/example-applications/openmpacc-examples-1.3.1.1/dotcode/vs130/dotcode/_inc
+-I/home/fuchsto/ti-oam-experiments.git/base/_inc/
 -Wall
 -pedantic
 -Wextra

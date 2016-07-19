@@ -12,6 +12,7 @@ endif
 
 OA_SHELL_FLAGS  = $(OA_SHELL_VERBOSE_OPTS) $(OA_SHELL_DEBUG_OPTS)
 INCLUDE_PATHS   = -I$(PWD)/include -I../base/_inc
+LIBRARY_PATHS   = -L$(PWD)../base/_lib -L$(PWD)
 
 CL                    = cl6x $(INCLUDE_PATHS)
 OA_SHELL              = clacc
@@ -24,7 +25,7 @@ OA_SHELL_TMP_FILES    = *.out __TI_CLACC_KERNEL.c *.cl *.asm *.dsp_h \
 #LC_ALL?=C
 export LC_ALL=C
 
-CC_ARM_OPTS     = -march=armv7-a -mtune=cortex-a15 -mfloat-abi=hard -mfpu=vfp
+CC_ARM_OPTS     = -mtune=cortex-a15 -mfloat-abi=hard -mfpu=vfp
 
 CPP_OPTS        = $(INCLUDE_PATHS) $(CC_DFLAGS) $(CC_ARM_OPTS) -std=c++11
 CC_OPTS         = $(INCLUDE_PATHS) $(CC_DFLAGS)
@@ -32,8 +33,8 @@ CC_OPTS         = $(INCLUDE_PATHS) $(CC_DFLAGS)
 OA_TC_OPTS      = $(INCLUDE_PATHS) $(CC_DFLAGS)
 OA_HC_OPTS      = $(INCLUDE_PATHS) $(CC_DFLAGS) $(CC_ARM_OPTS) -Wall -Wextra -fopenmp -ffast-math
 
-OA_TL_OPTS      = -lm -l:liboam.a
-OA_HL_OPTS      = -lm -l:liboam.a
+OA_TL_OPTS			= $(LIBRARY_PATHS) -l:liboam.a
+OA_HL_OPTS			= $(LIBRARY_PATHS) -l:liboam.a
 
 OA_SHELL_OPTS   = $(OA_SHELL_FLAGS) --hc="$(OA_HC_OPTS)" --tc="$(OA_TC_OPTS)" --hl="$(OA_HL_OPTS)" --tl="$(OA_TL_OPTS)"
 
@@ -58,9 +59,7 @@ $(BASE_OAM_LIB):
 	$(CC) $(CC_OPTS) -c $<
 
 deploy: $(EXE)
-	sudo mkdir -p $(HOME)/targetNFS/home/root/run/
-	sudo cp $(EXE) $(HOME)/targetNFS/home/root/run/
-	scp $(EXE) evm:~/run/
+	scp $(EXE) evm:~/
 
 clean:
 	@rm -f $(EXE) $(BASE_OAM_LIB) $(OA_SHELL_TMP_FILES) *.log

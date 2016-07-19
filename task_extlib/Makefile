@@ -11,7 +11,10 @@ endif
 
 OA_SHELL_FLAGS	= $(OA_SHELL_VERBOSE_OPTS) $(OA_SHELL_DEBUG_OPTS)
 INCLUDE_PATHS		= -I$(PWD)/include  -I../base/_inc
-LIBRARY_PATHS   = -L$(PWD)../base/_lib
+LIBRARY_PATHS   = -L$(PWD)../base/_lib -L$(PWD)
+
+QMAKE_DEFAULT_INCDIRS := $(QMAKE_DEFAULT_INCDIRS) $(INCLUDE_PATHS)
+QMAKE_DEFAULT_LIBDIRS := $(QMAKE_DEFAULT_LIBDIRS) $(LIBRARY_PATHS)
 
 CL										= cl6x $(INCLUDE_PATHS) $(LIBRARY_PATHS)
 OA_SHELL							= clacc
@@ -22,10 +25,10 @@ OA_SHELL_TMP_FILES		= *.out __TI_CLACC_KERNEL.c *.cl *.asm *.dsp_h \
 
 export LC_ALL=C
 
-CC_ARM_OPTS			= -march=armv7-a -mtune=cortex-a15 -mfloat-abi=hard -mfpu=neon
+CC_ARM_OPTS     = -mtune=cortex-a15 -mfloat-abi=hard -mfpu=vfp
 
-CPP_OPTS				= $(INCLUDE_PATHS) $(CC_DFLAGS) $(CC_ARM_OPTS) -std=c++11
-CC_OPTS					= $(INCLUDE_PATHS) $(CC_DFLAGS)
+CPPFLAGS			 := $(CPPFLAGS) $(CC_DFLAGS) $(CC_ARM_OPTS) -std=c++11
+CFLAGS				 := $(CFLAGS) $(CC_DFLAGS)
 
 OA_TC_OPTS			= $(INCLUDE_PATHS) $(CC_DFLAGS)
 OA_HC_OPTS			= $(INCLUDE_PATHS) $(CC_DFLAGS) $(CC_ARM_OPTS) -Wall -Wextra -fopenmp
@@ -68,13 +71,13 @@ $(EXE): $(HOST_OBJS) $(DECODER_LIB) $(BASE_OAM_LIB)
 	$(OA_SHELL) $(OA_SHELL_OPTS) $(HOST_OBJS) $(DECODER_LIB) $(BASE_OAM_LIB) -o $@
 
 %.o: %.cpp
-	$(CPP) $(CPP_OPTS) -c $<
+	$(CPP) $(CPPFLAGS) $(INCLUDE_PATHS) -c $<
 
 #	%.o: %.c
 #		$(CC) $(CC_OPTS) -c $<
 
 deploy: $(EXE)
-	@scp $(EXE) evm:~/run/task_extlib/
+	@scp $(EXE) evm:~/
 
 clean:
 	@rm -f $(EXE) $(OA_SHELL_TMP_FILES) *.log *.a

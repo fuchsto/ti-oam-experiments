@@ -1,7 +1,7 @@
 #ifndef DSP_IMG_FILTER__MACRO_H__INCLUDED
 #define DSP_IMG_FILTER__MACRO_H__INCLUDED
 
-#include <string.h>
+// #include <string.h>
 
 /**
  * To avoid compiler warning Wunused-var.

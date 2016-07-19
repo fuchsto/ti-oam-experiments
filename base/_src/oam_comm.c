@@ -80,6 +80,11 @@ int oam_comm__poll_interval(
   int last_poll_elapsed = time_now_ms - host_signals->last_poll_time_ms[tid];
   if (host_signals->last_poll_time_ms[tid] == 0 ||
       last_poll_elapsed >= host_signals->poll_interval_ms) {
+#ifdef DEBUG
+    if (host_signals->poll_interval_ms >= 500) {
+      printf("[ %.3fs ] .. oam_comm__poll_interval\n", omp_get_wtime());
+    }
+#endif
     host_signals->last_poll_time_ms[tid] = time_now_ms;
     return 1;
   }
@@ -98,13 +103,18 @@ int oam_comm__poll_message(
   #pragma omp flush
   if (0 != host_signals->cancel) {
     do_abort = 1;
+#ifdef DEBUG
+    if (OMPACC_TASK__CANCEL != host_signals->ret) {
+      printf("[ %.3fs ] !! oam_task__poll_message: cancel\n", omp_get_wtime());
+    }
+#endif
     host_signals->ret = OMPACC_TASK__CANCEL;
-//  printf("[ %.3fs ] !! oam_task__poll_message: cancel\n", omp_get_wtime());
   } else if (host_signals->timeout_after_ms <=
-              (omp_get_wtime() - time_start) * 1000) {
+              (omp_get_wtime() - time_start) * 1000 &&
+             OMPACC_TASK__TIMEOUT != host_signals->ret) {
     do_abort = 1;
     host_signals->ret = OMPACC_TASK__TIMEOUT;
-    printf("[ %.3fs ] !! oam_task__poll_message: timeout\n", omp_get_wtime());
+//  printf("[ %.3fs ] !! oam_task__poll_message: timeout\n", omp_get_wtime());
   }
   return do_abort;
 }

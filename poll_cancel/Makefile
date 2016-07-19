@@ -4,15 +4,15 @@ ifeq (1,$(verbose))
 OA_SHELL_VERBOSE_OPTS = --show_cc_opts -v -k
 endif
 ifeq (DEBUG, $(buildtype))
-OA_SHELL_DEBUG_OPTS   = -d -p -g
-# CC_DFLAGS             = -DDEBUG -DENABLE_LOGGING
+# OA_SHELL_DEBUG_OPTS   = -d -p -g
+  CC_DFLAGS             = -DDEBUG -DENABLE_LOGGING
 else
-# CC_DFLAGS             = -DNDEBUG
+  CC_DFLAGS             = -DNDEBUG
 endif
 
 OA_SHELL_FLAGS  = $(OA_SHELL_VERBOSE_OPTS) $(OA_SHELL_DEBUG_OPTS)
 INCLUDE_PATHS   = -I$(PWD)/include -I../base/_inc/
-LIBRARY_PATHS   = -L$(PWD)../base/_lib
+LIBRARY_PATHS   = -L$(PWD)../base/_lib -L$(PWD)
 
 CL                    = cl6x $(INCLUDE_PATHS)
 OA_SHELL              = clacc
@@ -59,10 +59,10 @@ $(EXE): $(OBJS) $(BASE_OAM_LIB)
 	$(CC) $(CC_OPTS) -c $<
 
 deploy: $(EXE)
-	@scp $(EXE) evm:~/run/
+	@scp $(EXE) evm:~/
 
 clean:
-	@rm -f $(EXE) $(OA_SHELL_TMP_FILES) *.log
+	@rm -f $(EXE) $(BASE_OAM_LIB) $(OA_SHELL_TMP_FILES) *.log
 
 help:
 	@echo "options:      verbose=1           verbose build log messages"

@@ -78,6 +78,15 @@ void parse_args(int argc, char * argv[], RunParams * pout)
   }
 }
 
+static inline double timestamp()
+{
+  struct timespec ts;
+  long long timestamp;
+  clock_gettime(CLOCK_REALTIME, &ts); /* or: CLOCK_MONOTONIC */
+  timestamp = ts.tv_sec * 1000000000LL + ts.tv_nsec;
+  return (timestamp / 1.0e9);
+}
+
 
 int computation_at_host(int size)
 {
@@ -143,17 +152,6 @@ int main(int argc, char *argv[])
   std::cout << "[ host ] -- [ "
             << std::setprecision(3) << std::fixed
             << oam_timestamp() << "s ] "
-            << "Setting param to 555" << std::endl;
-  host_signals->param  = 555;
-
-  oam_comm__flush_signals(host_signals);
-
-  /* Computation at host parallel to target task: */
-  computation_at_host(params.array_size / 2 * params.num_host_repeat);
-
-  std::cout << "[ host ] -- [ "
-            << std::setprecision(3) << std::fixed
-            << oam_timestamp() << "s ] "
             << "Setting param to 999" << std::endl;
   host_signals->param  = 999;
 
@@ -167,20 +165,22 @@ int main(int argc, char *argv[])
               << std::endl;
     ts_cancel = oam_timestamp();
     oam_task__request_cancel(host_signals);
-    usleep(1000);
+    usleep(10);
     oam_comm__flush_signals(host_signals);
   }
 
   /* Block until completion of target task: */
   int result = target_future.get();
 
+  ts_t ts_target_ret = oam_timestamp();
+
   if (params.cancel_task) {
     std::cout << "[ host ] -- [ "
               << std::setprecision(3) << std::fixed
-              << oam_timestamp() << "s ] "
+              << ts_target_ret << "s ] "
               << "Cancellation latency: "
               << std::setprecision(3) << std::fixed
-              << oam_elapsed_since(ts_cancel) * 1.0e6 << "us"
+              << (ts_target_ret - ts_cancel) * 1.0e6 << "us"
               << std::endl;
   }
   std::cout << "[ host ] -- [ "
@@ -236,7 +236,7 @@ static void print_usage(const RunParams * params)
             << std::endl
             << "Running:"
             << std::endl
-            << "  task_extlib.bin"
+            << "  poll_cancel.bin"
             << " -b "  << params->array_size
             << " -hr " << params->num_host_repeat
             << " -tr " << params->num_target_repeat

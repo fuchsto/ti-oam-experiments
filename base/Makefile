@@ -10,11 +10,23 @@ OA_SHELL_TMP_FILES		= *.out __TI_CLACC_KERNEL.c *.cl *.asm *.dsp_h \
 # LC_ALL?=C
 export LC_ALL=C
 
+UNAME_M :=$(shell uname -m)
+ifneq (,$(findstring x86, $(UNAME_M)))
+ ifeq ($(TARGET_ROOTDIR),)
+ $(call error,ERROR - TARGET_ROOTDIR must be set for cross compiling)
+ endif
+endif
+
+ifeq ($(TI_OCL_CGT_INSTALL),)
+  TI_OCL_CGT_INSTALL = $(TARGET_ROOTDIR)/usr/share/ti/cgt-c6x
+endif
+
+
 ifeq (1,$(verbose))
 OA_SHELL_VERBOSE_OPTS = --show_cc_opts -v -k
 endif
 ifeq (DEBUG, $(buildtype))
-OA_SHELL_DEBUG_OPTS   = -d -p -g
+# OA_SHELL_DEBUG_OPTS   = -d -p -g
 CC_DFLAGS							= -DDEBUG -DENABLE_LOGGING
 else
 CC_DFLAGS				      = -DNDEBUG
