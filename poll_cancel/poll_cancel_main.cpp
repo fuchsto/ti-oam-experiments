@@ -165,8 +165,8 @@ int main(int argc, char *argv[])
               << std::endl;
     ts_cancel = oam_timestamp();
     oam_task__request_cancel(host_signals);
-    usleep(10);
-    oam_comm__flush_signals(host_signals);
+//  usleep(10);
+//  oam_comm__flush_signals(host_signals);
   }
 
   /* Block until completion of target task: */

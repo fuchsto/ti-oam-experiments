@@ -44,13 +44,13 @@ int target_function(
   {
     oam_task__enter(host_signals);
 
-    for (r = 0; r < repeats; r++) {
-
-      if (!oam_task__aborted(host_signals)) {
-        #pragma omp target map(to:     in_buffer[0:size], size) \
-                           map(from:   out_buffer[0:size], acc) \
-                           map(tofrom: host_signals[0:1])
-        {
+    if (!oam_task__aborted(host_signals))
+    {
+      #pragma omp target map(to:     in_buffer[0:size], size) \
+                         map(from:   out_buffer[0:size], acc) \
+                         map(tofrom: host_signals[0:1])
+      {
+        for (r = 0; r < repeats; r++) {
           ts_t ts_start = oam_timestamp();
           int  aborted  = 0;
           acc           = 0;
@@ -63,10 +63,10 @@ int target_function(
               acc++;
             }
           }
-        } // omp target
-      }
-//    oam_task__step(host_signals);
+        }
+      } // omp target
     }
+    oam_task__step(host_signals);
   } // omp target data
 
   return acc;
