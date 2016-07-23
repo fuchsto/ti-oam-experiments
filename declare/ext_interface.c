@@ -4,6 +4,10 @@
 
 #pragma omp declare target
 static inline char ext_sil(char c);
+
+#include "check_compiler_flag.h"
+
+#include "inl_interface.h"
 #pragma omp end declare target
 
 #define EXT_MACRO(x) ((x) / 2 * 5)
@@ -17,6 +21,6 @@ int    ext_bar(int    n) {
 }
 
 static inline char ext_sil(char c) {
-  return c + 10;
+  return _sinl_char(c + 10);
 }
 

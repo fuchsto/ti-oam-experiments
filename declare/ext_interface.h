@@ -1,6 +1,8 @@
 #ifndef EXT_INTERFACE_H__INCLUDED
 #define EXT_INTERFACE_H__INCLUDED
 
+#include "check_compiler_flag.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

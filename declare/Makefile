@@ -28,9 +28,9 @@ export LC_ALL=C
 CPPFLAGS						 := $(CPPFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS)
 CFLAGS							 := $(CFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS)
 
-OA_TC_OPTS      = $(INCLUDE_PATHS) $(CC_DFLAGS)
-OA_HC_OPTS      = $(INCLUDE_PATHS) $(CC_DFLAGS) $(CC_ARM_OPTS) \
-									-Wall -Wextra -fopenmp -ffast-math
+OA_TC_OPTS      = $(INCLUDE_PATHS) $(CC_DFLAGS) -D_OA_MODE -D_OA_TARGET_MODE
+OA_HC_OPTS      = $(INCLUDE_PATHS) $(CC_DFLAGS) -D_OA_MODE -D_OA_HOST_MODE \
+									$(CC_ARM_OPTS) -Wall -Wextra -fopenmp -ffast-math
 
 OA_TL_OPTS			= $(LIBRARY_PATHS) -l:liboam.a
 OA_HL_OPTS			= $(LIBRARY_PATHS) -l:liboam.a
@@ -60,13 +60,13 @@ $(BASE_OAM_LIB):
 	@echo "=="
 	@echo "== declare    == COMPILE.c:       C object: ${@}"
 	@echo "=="
-	$(COMPILE.c) $< -o $@
+	$(COMPILE.c) -D_OA_MODE -D_OA_MODE_GCC $< -o $@
 
 %.o: %.cpp
 	@echo "=="
 	@echo "== declare    == COMPILE.cpp:     CPP object: ${@}"
 	@echo "=="
-	$(COMPILE.cpp) -std=c++11 $< -o $@
+	$(COMPILE.cpp) -D_OA_MODE -D_OA_MODE_G++ -std=c++11 $< -o $@
 
 deploy: $(EXE)
 	scp $(EXE) evm:~/

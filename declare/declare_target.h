@@ -3,6 +3,13 @@
 
 #include <base/oam_types.h>
 
+#include "check_compiler_flag.h"
+
+// Uncomment this include to produce an example where a header that should
+// be included in a target declaration region has been previously included:
+//
+// include "inl_interface.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

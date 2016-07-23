@@ -2,6 +2,8 @@
 
 #include "declare_target.h"
 
+#include "check_compiler_flag.h"
+
 #include <base/macro.h>
 #include <base/logging.h>
 
@@ -10,7 +12,6 @@
 #include <base/oam_task_target.h>
 
 #include "ext_interface.h"
-
 
 /* ======================================================================== *
  * Begin of Target Function Declarations and Includes                       *
@@ -22,6 +23,8 @@
 #include <omp.h>
 
 #include "ti_omp_device.h"
+
+#include "inl_interface.h"
 
 uint32_t __core_num(void);
 
@@ -114,7 +117,8 @@ int target_task(
             #pragma omp atomic
             acc += ACC_INCREMENT(acc);
           }
-          out_buffer[size  / (i+1)] = ext_bar(in_buffer[repeats / i]);
+          out_buffer[size  / (i+1)]     += ext_bar(in_buffer[repeats / i]);
+          out_buffer[size  / ((i/2)+1)] += _sinl_int(i);
         }
       }
     }
