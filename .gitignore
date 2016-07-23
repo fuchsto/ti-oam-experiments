@@ -24,6 +24,8 @@ tags
 
 *.dep
 
+*.log
+
 *.cl
 
 */.metadata

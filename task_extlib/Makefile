@@ -11,17 +11,17 @@ endif
 
 OA_SHELL_FLAGS	= $(OA_SHELL_VERBOSE_OPTS) $(OA_SHELL_DEBUG_OPTS)
 INCLUDE_PATHS		= -I$(PWD)/include  -I../base/_inc
-LIBRARY_PATHS   = -L$(PWD)../base/_lib -L$(PWD)
+LIBRARY_PATHS   = -L. -L../base/_lib
 
 QMAKE_DEFAULT_INCDIRS := $(QMAKE_DEFAULT_INCDIRS) $(INCLUDE_PATHS)
 QMAKE_DEFAULT_LIBDIRS := $(QMAKE_DEFAULT_LIBDIRS) $(LIBRARY_PATHS)
 
-CL										= cl6x $(INCLUDE_PATHS) $(LIBRARY_PATHS)
-OA_SHELL							= clacc
-CPP										= arm-linux-gnueabihf-g++
-CC										= arm-linux-gnueabihf-gcc
-OA_SHELL_TMP_FILES		= *.out __TI_CLACC_KERNEL.c *.cl *.asm *.dsp_h \
-												*.bc *.objc *.if *.map *.opt *.int.c *.o *.obj
+CL									= cl6x $(INCLUDE_PATHS) $(LIBRARY_PATHS)
+OA_SHELL						= clacc
+CPP									= arm-linux-gnueabihf-g++
+CC									= arm-linux-gnueabihf-gcc
+OA_SHELL_TMP_FILES	= *.out __TI_CLACC_KERNEL.c *.cl *.asm *.dsp_h \
+											*.bc *.objc *.if *.map *.opt *.int.c *.o *.obj
 
 export LC_ALL=C
 
@@ -31,7 +31,8 @@ CPPFLAGS			 := $(CPPFLAGS) $(CC_DFLAGS) $(CC_ARM_OPTS) -std=c++11
 CFLAGS				 := $(CFLAGS) $(CC_DFLAGS)
 
 OA_TC_OPTS			= $(INCLUDE_PATHS) $(CC_DFLAGS)
-OA_HC_OPTS			= $(INCLUDE_PATHS) $(CC_DFLAGS) $(CC_ARM_OPTS) -Wall -Wextra -fopenmp
+OA_HC_OPTS			= $(INCLUDE_PATHS) $(CC_DFLAGS) $(CC_ARM_OPTS) \
+									-Wall -Wextra -fopenmp
 
 OA_TL_OPTS			= $(LIBRARY_PATHS) -l:liboam.a
 OA_HL_OPTS			= $(LIBRARY_PATHS) -l:liboam.a
@@ -48,7 +49,6 @@ HOST_OBJS				= $(patsubst %.cpp, %.o, $(HOST_CODE))
 BASE_OAM_LIB		= liboam.a
 
 LIBEXT_TARGET		= libdecoder_target.a
-LIBEXT_HOST			= libdecoder_host.a
 
 DECODER_LIB			= $(LIBEXT_TARGET)
 
@@ -57,10 +57,6 @@ all: $(EXE)
 $(LIBEXT_TARGET):
 	$(MAKE) -C decoder/
 	@cp decoder/libdecoder_target.a .
-
-$(LIBEXT_HOST):
-	$(MAKE) -C decoder/
-	@cp decoder/libdecoder_host.a .
 
 $(BASE_OAM_LIB):
 	$(MAKE) -C ../base
@@ -71,7 +67,7 @@ $(EXE): $(HOST_OBJS) $(DECODER_LIB) $(BASE_OAM_LIB)
 	$(OA_SHELL) $(OA_SHELL_OPTS) $(HOST_OBJS) $(DECODER_LIB) $(BASE_OAM_LIB) -o $@
 
 %.o: %.cpp
-	$(CPP) $(CPPFLAGS) $(INCLUDE_PATHS) -c $<
+	$(COMPILE.cpp) $(CPPFLAGS) $(INCLUDE_PATHS) -c $<
 
 #	%.o: %.c
 #		$(CC) $(CC_OPTS) -c $<

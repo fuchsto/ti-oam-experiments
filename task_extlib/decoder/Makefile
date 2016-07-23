@@ -20,7 +20,7 @@ endif
 
 OA_SHELL_FLAGS        = $(OA_SHELL_VERBOSE_OPTS) $(OA_SHELL_DEBUG_OPTS)
 INCLUDE_PATHS         = -I$(PWD)/include -I../../base/_inc
-LIBRARY_PATHS					= -L$(PWD)../../base/_lib
+LIBRARY_PATHS					= -L. -L../../base/_lib
 
 CC_ARM_OPTS						= -march=armv7-a -mtune=cortex-a15 -mfloat-abi=hard -mfpu=neon
 
@@ -44,27 +44,14 @@ OA_SHELL_LIB_OPTS			= $(OA_SHELL_OPTS) --make_lib
 TARGET_EXE						= decoder_t.bin
 HOST_EXE							= decoder.bin
 
-MAIN_CODE             = decoder_main.cpp
-HOST_CODE             = decoder_host.cpp
 TARGET_CODE           = decoder_target.c
-
-MAIN_OBJ              = $(patsubst %.cpp, %.o, $(MAIN_CODE))
-HOST_OBJS							= $(patsubst %.cpp, %.o, $(HOST_CODE))
 
 BASE_OAM_LIB					= liboam.a
 
 TARGET_LIB            = libdecoder_target.a
-HOST_LIB	            = libdecoder_host.a
-# LIBS									= $(TARGET_LIB) $(HOST_LIB)
 LIBS									= $(TARGET_LIB)
 
 all: $(LIBS)
-
-$(TARGET_EXE): $(MAIN_OBJ) $(TARGET_LIB)
-	$(OA_SHELL) $(OA_SHELL_OPTS) $(MAIN_OBJ) $(TARGET_LIB) -o $@
-
-$(HOST_EXE): $(MAIN_OBJ) $(HOST_LIB)
-	$(CPP) -o $@ $(MAIN_OBJ) $(HOST_LIB)
 
 
 $(BASE_OAM_LIB):
@@ -75,9 +62,6 @@ $(BASE_OAM_LIB):
 $(TARGET_LIB): $(TARGET_CODE) $(BASE_OAM_LIB)
 	$(OA_SHELL) $(OA_SHELL_LIB_OPTS) $< -o $@ $(BASE_OAM_LIB)
 
-$(HOST_LIB): $(HOST_OBJS) $(BASE_OAM_LIB)
-	ar rcs $@ $^
-
 %.a: %.c
 	$(OA_SHELL) $(OA_SHELL_LIB_OPTS) $< -o lib$@
 
@@ -86,5 +70,5 @@ $(HOST_LIB): $(HOST_OBJS) $(BASE_OAM_LIB)
 	$(CPP) $(CPP_OPTS) -c $<
 
 clean:
-	@rm -f $(HOST_EXE) $(TARGET_EXE) $(TARGET_LIB) $(HOST_LIB) $(OA_SHELL_TMP_FILES) *.log
+	@rm -f $(HOST_EXE) $(TARGET_EXE) $(TARGET_LIB) $(OA_SHELL_TMP_FILES) *.log
 

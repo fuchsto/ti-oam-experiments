@@ -21,14 +21,12 @@ CC		                = arm-linux-gnueabihf-gcc
 OA_SHELL_TMP_FILES    = *.out __TI_CLACC_KERNEL.c *.cl *.asm *.dsp_h \
                         *.bc *.objc *.if *.map *.opt *.int.c *.o *.obj
 
-# temporary workaround for locale bug
-#LC_ALL?=C
 export LC_ALL=C
 
-CC_ARM_OPTS     = -mtune=cortex-a15 -mfloat-abi=hard -mfpu=vfp
+# CC_ARM_OPTS     = -mtune=cortex-a15 -mfloat-abi=hard -mfpu=vfp
 
-CPP_OPTS        = $(INCLUDE_PATHS) $(CC_DFLAGS) $(CC_ARM_OPTS) -std=c++11
-CC_OPTS         = $(INCLUDE_PATHS) $(CC_DFLAGS)
+CPPFLAGS						 := $(CPPFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS) $(CC_ARM_OPTS) -std=c++11
+CFLAGS							 := $(CFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS)
 
 OA_TC_OPTS      = $(INCLUDE_PATHS) $(CC_DFLAGS)
 OA_HC_OPTS      = $(INCLUDE_PATHS) $(CC_DFLAGS) $(CC_ARM_OPTS) -Wall -Wextra -fopenmp -ffast-math
@@ -46,22 +44,32 @@ OBJS						= $(patsubst %.cpp, %.o, $(HOST_CODE))
 BASE_OAM_LIB		= liboam.a
 
 $(EXE): $(OBJS) $(BASE_OAM_LIB)
+	@echo "=="
+	@echo "== comm_async    == OA_SHELL:        EXE: ${@}"
+	@echo "=="
 	$(OA_SHELL) $(OA_SHELL_OPTS) $(OBJS) $(BASE_OAM_LIB) $(TARGET_CODE) -o $@
 
 $(BASE_OAM_LIB):
 	$(MAKE) -C ../base
 	@cp ../base/_lib/*.a .
 
-%.o: %.cpp
-	$(CPP) $(CPP_OPTS) -c $<
-
 %.o: %.c
-	$(CC) $(CC_OPTS) -c $<
+	@echo "=="
+	@echo "== comm_async    == COMPILE.c:       C object: ${@}"
+	@echo "=="
+	$(COMPILE.c) $< -o $@
+
+%.o: %.cpp
+	@echo "=="
+	@echo "== comm_async    == COMPILE.cpp:     CPP object: ${@}"
+	@echo "=="
+	$(COMPILE.cpp) $< -o $@
 
 deploy: $(EXE)
 	scp $(EXE) evm:~/
 
 clean:
+	$(MAKE) -C ../base clean
 	@rm -f $(EXE) $(BASE_OAM_LIB) $(OA_SHELL_TMP_FILES) *.log
 
 help:
