@@ -33,9 +33,7 @@ endif
 OA_SHELL_FLAGS        = $(OA_SHELL_VERBOSE_OPTS) $(OA_SHELL_DEBUG_OPTS)
 INCLUDE_PATHS         = -I./_inc -I../_inc
 
-# CC_ARM_OPTS						= -march=armv7-a -mtune=cortex-a15 -mfloat-abi=hard -mfpu=neon
-
-CPPFLAGS						 := $(CPPFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS) $(CC_ARM_OPTS) -std=c++11
+CPPFLAGS						 := $(CPPFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS)
 CFLAGS							 := $(CFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS)
 
 OA_TC_OPTS						= $(INCLUDE_PATHS) $(CC_DFLAGS)
@@ -80,7 +78,7 @@ $(BUILD_DIR)/%.o: $(SOURCE_DIR)/%.cpp
 	@echo "=="
 	@echo "== base          == COMPILE.cpp:     CPP object: ${@}"
 	@echo "=="
-	$(COMPILE.cpp) $< -o $@
+	$(COMPILE.cpp) -std=c++11 $< -o $@
 
 $(BUILD_DIR)/%.o: $(SOURCE_DIR)/%.c
 	@echo "=="
