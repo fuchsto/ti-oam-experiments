@@ -45,23 +45,33 @@ OBJS        = $(patsubst %.cpp, %.o, $(HOST_CODE))
 
 all: $(EXE)
 
+$(EXE): $(OBJS) $(BASE_OAM_LIB)
+	@echo "=="
+	@echo "== poll_cancel   == OA_SHELL:        EXE: ${@}"
+	@echo "=="
+	$(OA_SHELL) $(OA_SHELL_OPTS) $(OBJS) $(BASE_OAM_LIB) $(TARGET_CODE) -o $@
+
 $(BASE_OAM_LIB):
 	$(MAKE) -C ../base
 	@cp ../base/_lib/*.a .
 
-$(EXE): $(OBJS) $(BASE_OAM_LIB)
-	$(OA_SHELL) $(OA_SHELL_OPTS) $(OBJS) $(BASE_OAM_LIB) $(TARGET_CODE) -o $@
+%.o: %.c
+	@echo "=="
+	@echo "== poll_cancel   == COMPILE.c:       C object: ${@}"
+	@echo "=="
+	$(COMPILE.c) $< -o $@
 
 %.o: %.cpp
-	$(COMPILE.cpp) -c $<
-
-%.o: %.c
-	$(COMPILE.c)   -c $<
+	@echo "=="
+	@echo "== poll_cancel   == COMPILE.cpp:     CPP object: ${@}"
+	@echo "=="
+	$(COMPILE.cpp) $< -o $@
 
 deploy: $(EXE)
 	@scp $(EXE) evm:~/
 
 clean:
+	$(MAKE) -C ../base clean
 	@rm -f $(EXE) $(BASE_OAM_LIB) $(OA_SHELL_TMP_FILES) *.log
 
 help:

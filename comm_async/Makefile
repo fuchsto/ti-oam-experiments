@@ -36,12 +36,14 @@ OA_HL_OPTS			= $(LIBRARY_PATHS) -l:liboam.a
 
 OA_SHELL_OPTS   = $(OA_SHELL_FLAGS) --hc="$(OA_HC_OPTS)" --tc="$(OA_TC_OPTS)" --hl="$(OA_HL_OPTS)" --tl="$(OA_TL_OPTS)"
 
+BASE_OAM_LIB		= liboam.a
+
 EXE							= comm_async.bin
 HOST_CODE				= comm_async_main.cpp
 TARGET_CODE			= comm_async_target.c
 OBJS						= $(patsubst %.cpp, %.o, $(HOST_CODE))
 
-BASE_OAM_LIB		= liboam.a
+all: $(EXE)
 
 $(EXE): $(OBJS) $(BASE_OAM_LIB)
 	@echo "=="
