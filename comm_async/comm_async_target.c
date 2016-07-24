@@ -28,6 +28,9 @@ uint32_t __core_num(void);
  * End of Target Function Declarations and Includes                         *
  * ======================================================================== */
 
+#define ACC_INCREMENT(x) 1
+
+
 int target_task(
   char        * in_buffer,
   char        * out_buffer,
@@ -107,7 +110,7 @@ int target_task(
           // Print progress:
           if (i % (repeats / 10) == (int)(__core_num())) {
             #pragma omp atomic
-            acc += 1;
+            acc += ACC_INCREMENT(acc);
           }
           out_buffer[size  / (i+1)] = in_buffer[repeats / i] + 100;
         }

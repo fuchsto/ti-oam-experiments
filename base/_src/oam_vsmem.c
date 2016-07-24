@@ -20,9 +20,22 @@
 #pragma omp declare target
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+
 #include <omp.h>
 
 #include "ti_omp_device.h"
+
+void * memcpy(
+  void         * dst,
+  const void   * src,
+  unsigned int   nbytes);
+
+void * memset(
+  void         * dst,
+  int            value,
+  size_t         nbytes);
+
 #pragma omp end declare target
 
 void * oam_vsmem__copy(
@@ -31,6 +44,39 @@ void * oam_vsmem__copy(
   unsigned int   nbytes)
 {
   return memcpy(dst, src, nbytes);
+}
+
+void * oam_vsmem__set(
+  void                * dst,
+  const unsigned char   value,
+  unsigned int          nbytes)
+{
+  return memset(dst, value, nbytes);
+}
+
+int oam_vsmem__freeMem(
+  void                * paddr)
+{
+  free(paddr);
+  return 1;
+}
+
+void * oam_vsmem__getMem(
+  int                   segid,
+  unsigned int          size,
+  oam_vsmem__eMemTag    tag)
+{
+  return NULL;
+}
+
+void * oam_vsmem__getAlignedMem(
+  int                   segid,
+  unsigned int          size,
+  oam_vsmem__eMemTag    tag,
+  unsigned int          align,
+  const char          * pinitializer)
+{
+  return NULL;
 }
 
 /* ======================================================================= *
