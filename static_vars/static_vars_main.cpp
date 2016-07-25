@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
   int  num_host_repeat    = 100;
   int  num_target_repeat  = 10;
   int  timeout_after_ms   = 10000;
-  int  poll_interval_ms   = 500;
+  int  poll_interval_ms   = 1;
   bool cancel_task        = false;
 
   for (int argi = 1; argi < argc; argi += 2) {
@@ -88,7 +88,15 @@ int main(int argc, char *argv[])
     array_b[i] = 0;
   }
 
-  target_init(num_target_repeat);
+  std::cout << "Writing values to static array (base value: 1):"
+            << std::endl;
+  target_init(1);
+  target_print_nvalues(10);
+
+  std::cout << "Writing values to static array (base value: 3):"
+            << std::endl;
+  target_init(3);
+  target_print_nvalues(10);
 
   HostMessage * host_signals = oam_comm__host_signals_new(
                                  poll_interval_ms,
@@ -112,16 +120,38 @@ int main(int argc, char *argv[])
 
   computation_at_host(array_size / 2 * num_host_repeat);
 
+  ts_t ts_cancel_req_start = oam_timestamp();
+  ts_t ts_cancel_req_end   = oam_timestamp();
   if (cancel_task) {
+    ts_cancel_req_start = oam_timestamp();
     oam_task__request_cancel(host_signals);
+    ts_cancel_req_end   = oam_timestamp();
   }
 
-  computation_at_host(array_size / 2 * num_host_repeat);
+  int  result      = target_future.get();
+  ts_t ts_task_end = oam_timestamp();
 
-  int result = target_future.get();
+  if (cancel_task) {
+    std::cout << "[ host ] -- [ "
+              << std::setprecision(3) << std::fixed
+              << oam_timestamp() << "s ] "
+              << "request latency:      "
+              << std::setprecision(3) << std::fixed
+              << (ts_cancel_req_end - ts_cancel_req_start) * 1.0e6 << "us "
+              << std::endl;
+    std::cout << "[ host ] -- [ "
+              << std::setprecision(3) << std::fixed
+              << oam_timestamp() << "s ] "
+              << "cancellation latency: "
+              << std::setprecision(3) << std::fixed
+              << (ts_task_end - ts_cancel_req_start) * 1.0e6 << "us"
+              << std::endl;
+  }
 
   std::cout << "Task exit code:        " << host_signals->ret << std::endl;
   std::cout << "The irrelevant result: " << result            << std::endl;
+
+  target_print_nvalues(10);
 
   if (host_signals->ret == OMPACC_TASK__OK) {
     // Verify output array if task ran to completion:

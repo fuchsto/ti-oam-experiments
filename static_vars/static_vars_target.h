@@ -4,9 +4,13 @@
 #include <base/oam_types.h>
 #include <base/oam_task.h>
 
+#define StaticArraySize 100
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+void target_print_nvalues(int nvalues);
 
 void target_init(float value);
 

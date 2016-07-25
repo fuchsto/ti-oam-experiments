@@ -23,7 +23,8 @@ tags
 *.orig
 
 *.dep
-
+*.rl
+*.pp
 *.log
 
 *.cl

@@ -8,8 +8,6 @@
 #include <base/logging.h>
 #include <base/macro.h>
 
-#define NValues 100
-
 /* ======================================================================== *
  * Begin of Target Function Declarations and Includes                       *
  * ------------------------------------------------------------------------ */
@@ -34,15 +32,34 @@ static float static_buffer[100];
 
 void target_init(float value)
 {
-  #pragma omp target data map(to: value)
+  #pragma omp target map(to:     value) \
+                     map(tofrom: static_buffer)
   {
     int i;
     #pragma omp parallel for schedule(static)
-    for (i = 0; i < NValues; i++) {
-      static_buffer[i] = value * (i+1);
+    for (i = 0; i < StaticArraySize; i++) {
+      float v = value * (i+1);
+      static_buffer[i] += v;
     }
   }
 }
+
+void target_print_nvalues(int nvalues)
+{
+  #pragma omp target map(to: nvalues) \
+                     map(to: static_buffer)
+  {
+    int i;
+    int nv = nvalues < StaticArraySize
+             ? nvalues
+             : StaticArraySize;
+    for (i = 0; i < nv; i++) {
+      printf("%.4f ", static_buffer[i]);
+    }
+    printf("\n");
+  }
+}
+
 
 int target_function(
   char        * in_buffer,
@@ -63,7 +80,7 @@ int target_function(
     if (!oam_task__aborted(host_signals)) {
       #pragma omp target map(to:     in_buffer[0:size], size) \
                          map(from:   out_buffer[0:size], acc) \
-                         map(tofrom: host_signals[0:1])
+                         map(tofrom: host_signals[0:1], static_buffer)
       {
         acc = 0;
         double time_start = omp_get_wtime();
@@ -72,23 +89,38 @@ int target_function(
         printf("target time start: %.3f max. ms: %d -> time limit: %.3f\n",
                time_start, host_signals->timeout_after_ms, time_max);
 
+        int c_id;
         #pragma omp parallel \
+                    private(c_id) \
                     shared(host_signals, acc)
         {
+          c_id = omp_get_thread_num();
           int aborted = 0;
-          int i;
+          int i, r;
           #pragma omp for schedule(static)
           for (i = 0; i < size; i++) {
-            // Poll cancellation request:
-            if (0 != i % 10 ||
-                0 == oam_task__poll_cancel_request(
-                       time_start, host_signals, &aborted)) {
-              // Work step implementation here
-              out_buffer[i] = static_buffer[i % NValues] += in_buffer[i];
+            if (i % (size / 10) == c_id) {
+              printf("[ target ] at index %d / %d\n", i, size - 1);
+            }
+            for (r = 0; r < repeats; r++) {
+              // Poll cancellation request:
+              if (0 == aborted &&
+                  (c_id != i+r % 10 ||
+                   0 == oam_task__poll_cancel_request(
+                          time_start, host_signals, &aborted))) {
+                // Work step implementation here
+                static_buffer[i % 64] =
+                   ((float)i) + ((float)r / 10.0);
+
+                out_buffer[i] = static_buffer[i];
+              } else {
+                break;
+              }
             }
           }
+          printf("target section: leaving, canceled: %d\n",
+                 host_signals->cancel);
         }
-        printf("target section 1: leaving\n");
       } // omp target
     }
 
