@@ -10,19 +10,20 @@
 #include <base/macro.h>
 #include <base/logging.h>
 
-
-#include "decoder_target_fun_a.h"
-
 /* ======================================================================== *
  * Begin of Target Function Declarations and Includes                       *
  * ------------------------------------------------------------------------ */
 #pragma omp declare target
 
-#  include <stdlib.h>
-#  include <stdio.h>
-#  include <omp.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <omp.h>
 
-#  include "ti_omp_device.h"
+#include "ti_omp_device.h"
+
+#include "decoder_target_fun_a.h"
+
+#define ACC_INCREMENT(x) 1
 
 #pragma omp end declare target
 /* ------------------------------------------------------------------------ *
@@ -123,41 +124,35 @@ int decoder_body(
     double time_max = (host_signals->time_start_ms + limit_ms) * 1.0e-3;
     acc = 0;
 
-//  printf("[ %.3fs ] >> decoder_body: %.3f max.ms: %d "
-//         "-> time limit: %.3f repeats: %d\n",
-//         ts_start, host_signals->time_start_ms * 1.0e-3,
-//         host_signals->timeout_after_ms,
-//         time_max, repeats);
-//
-//  printf("[ %.3fs ] >> decoder_body: processor cores: %d "
-//         "max. number of OpenMP threads: %d\n",
-//         omp_get_wtime(), omp_get_num_procs(), omp_get_max_threads());
+    printf("[ %.3fs ] >> decoder_body: %.3f max.ms: %d "
+           "-> time limit: %.3f repeats: %d\n",
+           ts_start, host_signals->time_start_ms * 1.0e-3,
+           host_signals->timeout_after_ms,
+           time_max, repeats);
 
     int aborted;
-/*
-    #pragma omp parallel \
-                private(i, r, aborted) \
-                shared(host_signals, acc)
-*/
     {
       aborted = 0;
-//    #pragma omp for
-      for (i = 0; i < size * repeats; i++) {
-        // Poll cancellation request:
-        if (0 == aborted &&
-            0 == oam_task__poll_cancel_request(
-                   ts_start, host_signals, &aborted)) {
-          // Print progress:
-          if (i % ((size * repeats) / 10) == (int)(__core_num())) {
-            printf("[ %.3fs ] ++ decoder_body: %d / %d, acc:%d, param:%d\n",
-                   omp_get_wtime(), i, size-1, acc, host_signals->param);
+      for (i = 0; i < size; i++) {
+        for (r = 0; r < repeats; r++) {
+          // Poll cancellation request:
+          if (0 == aborted &&
+              0 == oam_task__poll_cancel_request(
+                     ts_start, host_signals, &aborted)) {
+            // Print progress:
+            if (((i+1) * r) % ((size * repeats) / 10) ==
+                (int)(__core_num())) {
+              printf("[ %.3fs ] ++ decoder_body: %d / %d, acc:%d, param:%d\n",
+                     omp_get_wtime(), i, size-1, acc, host_signals->param);
+            }
+            out_buffer[i] = decoder_fun_a(in_buffer[i]);
           }
-          acc += 1;
-        }
-      } // omp for
-    } // omp parallel
-//  printf("[ %.3fs ] << target section: leaving, acc:%d, param:%d\n",
-//         omp_get_wtime(), acc, host_signals->param);
+        } // for repeats
+        acc += ACC_INCREMENT(acc);
+      } // for size
+    }
+    printf("[ %.3fs ] << target section: leaving, acc:%d, param:%d\n",
+           omp_get_wtime(), acc, host_signals->param);
   } // omp target
 
   return acc;

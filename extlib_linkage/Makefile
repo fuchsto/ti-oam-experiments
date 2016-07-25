@@ -35,7 +35,7 @@ OA_HC_OPTS			= $(INCLUDE_PATHS) $(CC_DFLAGS) $(CC_ARM_OPTS) \
 									-Wall -Wextra -fopenmp -ffast-math
 
 OA_TL_OPTS			= $(LIBRARY_PATHS)
-OA_HL_OPTS			= $(LIBRARY_PATHS) -l:libdecoder_host.a -l:liboam.a
+OA_HL_OPTS			= $(LIBRARY_PATHS)
 
 OA_SHELL_OPTS		= $(OA_SHELL_FLAGS) \
 									--hc="$(OA_HC_OPTS)" --tc="$(OA_TC_OPTS)" \

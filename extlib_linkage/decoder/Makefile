@@ -25,11 +25,11 @@ LIBRARY_PATHS					= -L. -L../../base/_lib
 # CC_ARM_OPTS						= -mtune=cortex-a15 -mfloat-abi=hard -mfpu=neon
 
 CPPFLAGS						 := $(CPPFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS)
-CFLAGS							 := $(CFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS)
+CFLAGS							 := $(CFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS) -O3
 
 OA_TC_OPTS						= $(INCLUDE_PATHS) $(CC_DFLAGS)
 OA_HC_OPTS						= $(INCLUDE_PATHS) $(CC_DFLAGS) $(CC_ARM_OPTS) \
-												-Wall -Wextra -fopenmp
+												-Wall -Wextra -fopenmp -std=c99
 
 OA_TL_OPTS						= -lm
 OA_HL_OPTS						= -lm
@@ -42,7 +42,7 @@ OA_SHELL_OPTS					= $(OA_SHELL_FLAGS) \
 
 OA_SHELL_LIB_OPTS			= $(OA_SHELL_OPTS) --make_lib
 
-TARGET_CODE           = decoder_target_fun_a.c decoder_target.c
+TARGET_CODE           = ../ext/ext.c decoder_target_fun_a.c decoder_target.c
 HOST_CODE							= decoder_host.c
 
 HOST_OBJS							= $(patsubst %.c, %.o, $(HOST_CODE))
