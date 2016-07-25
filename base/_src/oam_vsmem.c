@@ -61,6 +61,12 @@ int oam_vsmem__freeMem(
   return 1;
 }
 
+int oam_vsmem__freeTag(
+  oam_vsmem__eMemTag    tag)
+{
+  return 1;
+}
+
 void * oam_vsmem__getMem(
   int                   segid,
   unsigned int          size,
@@ -92,7 +98,7 @@ void * oam_vsmem__symmetric_malloc(
 #else
   pmem = __malloc_msmc(nbytes);
 #endif
-  printf("[ %.3fs ] ** oam_vsmem__malloc(%d) -> 0x%p\n",
+  printf("[ %.3fs ] ** oam_vsmem__symmetric_malloc(%d) -> 0x%p\n",
          omp_get_wtime(), nbytes, pmem);
   return pmem;
 }

@@ -1,6 +1,9 @@
 #ifndef DSP_IMG_FILTER__LOGGING_H__INCLUDED
 #define DSP_IMG_FILTER__LOGGING_H__INCLUDED
 
+#include <stdio.h>
+#include <string.h>
+
 #define LOG_HOST__FILE_FIELD_WIDTH       32
 #define LOG_HOST__LINE_FIELD_WIDTH        5
 #define LOG_HOST__MAX_MESSAGE_SIZE      128

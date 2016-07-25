@@ -36,8 +36,8 @@ typedef struct run_params_t
   int  array_size;
   int  num_host_repeat;
   int  num_target_repeat;
-  int  timeout_after_ms;
-  int  poll_interval_ms;
+  int  timeout_after_us;
+  int  poll_interval_us;
   bool cancel_task;
 }
 RunParams;
@@ -53,8 +53,8 @@ void parse_args(int argc, char * argv[], RunParams * pout)
   pout->array_size        = 1024000;
   pout->num_host_repeat   = 100;
   pout->num_target_repeat = 150;
-  pout->timeout_after_ms  = 30000;
-  pout->poll_interval_ms  = 100;
+  pout->timeout_after_us  = 3000000;
+  pout->poll_interval_us  = 200;
   pout->cancel_task       = false;
 
   for (int argi = 1; argi < argc; argi += 2) {
@@ -71,11 +71,11 @@ void parse_args(int argc, char * argv[], RunParams * pout)
         std::max<int>(1, strtoll(argv[argi + 1], NULL, 10));
     }
     else if (strcmp(argv[argi], "-to") == 0) {
-      pout->timeout_after_ms =
+      pout->timeout_after_us =
         std::max<int>(1, strtoll(argv[argi + 1], NULL, 10));
     }
     else if (strcmp(argv[argi], "-pi") == 0) {
-      pout->poll_interval_ms =
+      pout->poll_interval_us =
         std::max<int>(1, strtoll(argv[argi + 1], NULL, 10));
     }
     else if (strcmp(argv[argi], "-c") == 0) {
@@ -131,8 +131,8 @@ int main(int argc, char *argv[])
   }
 
   HostMessage * host_signals = oam_comm__host_signals_new(
-                                 params.poll_interval_ms,
-                                 params.timeout_after_ms);
+                                 params.poll_interval_us,
+                                 params.timeout_after_us);
 
   /* ---------------------------------------------------------------------- *
    * Run kernels on DSPs and record time to completion at host:             *
@@ -264,8 +264,8 @@ static void print_usage(const RunParams * params)
             << " -b "  << params->array_size
             << " -hr " << params->num_host_repeat
             << " -tr " << params->num_target_repeat
-            << " -to " << params->timeout_after_ms
-            << " -pi " << params->poll_interval_ms;
+            << " -to " << params->timeout_after_us
+            << " -pi " << params->poll_interval_us;
   if (params->cancel_task) {
     std::cout << " -c";
   }

@@ -72,6 +72,9 @@ void * oam_vsmem__set(
 int oam_vsmem__freeMem(
   void                * paddr);
 
+int oam_vsmem__freeTag(
+  oam_vsmem__eMemTag    tag);
+
 void * oam_vsmem__getMem(
   int                   segid,
   unsigned int          size,
