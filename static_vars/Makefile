@@ -59,7 +59,7 @@ $(EXE): $(OBJS) $(BASE_OAM_LIB)
 	$(CC) $(CC_OPTS) -c $<
 
 deploy: $(EXE)
-	@scp $(EXE) evm:~/
+	scp $(EXE) evm:~/
 
 clean:
 	@rm -f $(EXE) $(OA_SHELL_TMP_FILES) *.log

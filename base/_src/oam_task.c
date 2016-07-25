@@ -33,8 +33,6 @@ void oam_task__request_cancel(
     #pragma omp target update to (host_signals[0:1])
     ;
   }
-
-// printf("[ %.3fs ] >> oam_task__request_cancel\n", omp_get_wtime());
 }
 
 void oam_task__step(

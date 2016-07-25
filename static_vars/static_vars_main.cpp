@@ -1,4 +1,6 @@
 
+#include <unistd.h>
+
 #include <iostream>
 #include <iomanip>
 #include <cstdlib>
@@ -34,20 +36,18 @@ int computation_at_host(int size)
     if (i % (size / 10) == 0) {
       printf("[ host ] at index %d / %d\n", i, size - 1);
     }
-    if (i % 23) {
-      result += (i * result) % 11;
-    }
+    result += (i * result) % 11;
   }
   return result;
 }
 
 int main(int argc, char *argv[])
 {
-  int  array_size         = 1024000;
-  int  num_host_repeat    = 100;
-  int  num_target_repeat  = 10;
-  int  timeout_after_ms   = 10000;
-  int  poll_interval_ms   = 1;
+  int  array_size         = 10240;
+  int  num_host_repeat    = 30000;
+  int  num_target_repeat  = 50000;
+  int  timeout_after_us   = 10000000;
+  int  poll_interval_us   = 30;
   bool cancel_task        = false;
 
   for (int argi = 1; argi < argc; argi += 2) {
@@ -61,10 +61,10 @@ int main(int argc, char *argv[])
       num_host_repeat   = std::max<int>(1, strtoll(argv[argi + 1], NULL, 10));
     }
     else if (strcmp(argv[argi], "-to") == 0) {
-      timeout_after_ms  = std::max<int>(1, strtoll(argv[argi + 1], NULL, 10));
+      timeout_after_us  = std::max<int>(1, strtoll(argv[argi + 1], NULL, 10));
     }
     else if (strcmp(argv[argi], "-pi") == 0) {
-      poll_interval_ms  = std::max<int>(1, strtoll(argv[argi + 1], NULL, 10));
+      poll_interval_us  = std::max<int>(1, strtoll(argv[argi + 1], NULL, 10));
     }
     else if (strcmp(argv[argi], "-c") == 0) {
       cancel_task       = true;
@@ -99,8 +99,8 @@ int main(int argc, char *argv[])
   target_print_nvalues(10);
 
   HostMessage * host_signals = oam_comm__host_signals_new(
-                                 poll_interval_ms,
-                                 timeout_after_ms);
+                                 poll_interval_us,
+                                 timeout_after_us);
 
   /* ---------------------------------------------------------------------- *
    * Run kernels on DSPs and record time to completion at host:             *
@@ -118,14 +118,19 @@ int main(int argc, char *argv[])
                                num_target_repeat,
                                host_signals);
 
-  computation_at_host(array_size / 2 * num_host_repeat);
+  computation_at_host(array_size * num_host_repeat);
 
   ts_t ts_cancel_req_start = oam_timestamp();
   ts_t ts_cancel_req_end   = oam_timestamp();
   if (cancel_task) {
     ts_cancel_req_start = oam_timestamp();
     oam_task__request_cancel(host_signals);
+    oam_comm__flush_signals(host_signals);
     ts_cancel_req_end   = oam_timestamp();
+    std::cout << "[ host ] -- [ "
+              << std::setprecision(3) << std::fixed
+              << oam_timestamp() << "s ] "
+              << "Cancel request sent"  << std::endl;
   }
 
   int  result      = target_future.get();
