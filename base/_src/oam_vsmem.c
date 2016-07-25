@@ -22,9 +22,15 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <base/logging.h>
+
 #include <omp.h>
 
 #include "ti_omp_device.h"
+
+int    snprintf(char * , size_t, const char *, ...);
+int    printf(const char *, ...);
+char * strrchr(const char *, int);
 
 void * memcpy(
   void         * dst,
@@ -35,6 +41,9 @@ void * memset(
   void         * dst,
   int            value,
   size_t         nbytes);
+
+void * oam_vsmem__symmetric_malloc(
+  unsigned int   nbytes);
 
 #pragma omp end declare target
 
@@ -51,6 +60,9 @@ void * oam_vsmem__set(
   const unsigned char   value,
   unsigned int          nbytes)
 {
+  LOG_DEBUG("oam_vsmem__set: pMem:(%dp) value:(%d) nbytes:(%d)",
+            dst, value, nbytes);
+
   return memset(dst, value, nbytes);
 }
 
@@ -64,6 +76,7 @@ int oam_vsmem__freeMem(
 int oam_vsmem__freeTag(
   oam_vsmem__eMemTag    tag)
 {
+  LOG_DEBUG("oam_vsmem__freeTag: tag:(%dp)", tag);
   return 1;
 }
 
@@ -82,7 +95,11 @@ void * oam_vsmem__getAlignedMem(
   unsigned int          align,
   const char          * pinitializer)
 {
-  return NULL;
+  LOG_DEBUG("oam_vsmem__getAlignedMem: segId:(%d) size:(%d) tag:(%d) "
+                                      "align:(%d), pInit:(%p)",
+            segid, size, tag, align, pinitializer);
+  void * pmem = oam_vsmem__symmetric_malloc(size);
+  return pmem;
 }
 
 /* ======================================================================= *
@@ -98,16 +115,14 @@ void * oam_vsmem__symmetric_malloc(
 #else
   pmem = __malloc_msmc(nbytes);
 #endif
-  printf("[ %.3fs ] ** oam_vsmem__symmetric_malloc(%d) -> 0x%p\n",
-         omp_get_wtime(), nbytes, pmem);
+  LOG_DEBUG("oam_vsmem__symmetric_malloc(%d) -> 0x%p\n",nbytes, pmem);
   return pmem;
 }
 
 void oam_vsmem__symmetric_free(
   void         * pmem)
 {
-  printf("[ %.3fs ] ** oam_vsmem__free(0x%p)\n",
-         omp_get_wtime(), pmem);
+  LOG_DEBUG("oam_vsmem__free(0x%p)\n", pmem);
 #ifdef SYMMETRIC_MEMORY__USE_DDR
   __free_ddr(pmem);
 #else
@@ -122,8 +137,7 @@ void oam_vsmem__symmetric_heap_init(
   char * pmem_c = (char *)(pmem);
   #pragma omp target map(to: nbytes, pmem_c[0:nbytes])
   {
-    printf("[ %.3fs ] ** oam_vsmem__heap_init(0x%p, %d)\n",
-           omp_get_wtime(), pmem, nbytes);
+    LOG_DEBUG("oam_vsmem__heap_init(0x%p, %d)\n", pmem, nbytes);
 #ifdef SYMMETRIC_MEMORY__USE_DDR
     __heap_init_ddr((char *)(pmem_c), nbytes);
 #else

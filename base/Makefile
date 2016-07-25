@@ -41,8 +41,8 @@ OA_HC_OPTS						= $(INCLUDE_PATHS) $(CC_DFLAGS) $(CC_ARM_OPTS) \
 												-Wall -Wextra -Wno-empty-body -Wno-unused-parameter \
 												-fopenmp
 
-OA_TL_OPTS						= -lm
-OA_HL_OPTS						= -lm
+OA_TL_OPTS						= -lm -lrt
+OA_HL_OPTS						= -lm -lrt
 
 OA_SHELL_OPTS					= $(OA_SHELL_FLAGS) \
 												--hc="$(OA_HC_OPTS)" \
