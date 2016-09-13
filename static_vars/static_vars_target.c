@@ -85,10 +85,10 @@ int target_function(
     {
       acc = 0;
       double time_start = omp_get_wtime();
-      double limit_ms = (double)(host_signals->timeout_after_ms);
-      double time_max = time_start + (limit_ms / 1000.0);
-      printf("target time start: %.3f max. ms: %d -> time limit: %.3f\n",
-             time_start, host_signals->timeout_after_ms, time_max);
+      double limit_us = (double)(host_signals->timeout_after_us);
+      double time_max = time_start + (limit_us * 1.0e-6);
+      printf("target time start: %.3f max. us: %d -> time limit: %.3f\n",
+             time_start, host_signals->timeout_after_us, time_max);
 
       int i, r;
       int c_id;
@@ -103,9 +103,9 @@ int target_function(
             static_buffer[i % 64] =
                ((float)i) + ((float)r / 10.0);
 
-            out_buffer[i] = static_buffer[i];
+            out_buffer[i] = static_buffer[i] + c_id;
           } else {
-            #pragma omp target update to (host_signals[0:num_bytes])
+            #pragma omp target update to (host_signals[0:1])
             break;
           }
         }
