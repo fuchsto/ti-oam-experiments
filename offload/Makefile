@@ -11,7 +11,7 @@ else
 endif
 
 OA_SHELL_FLAGS  = $(OA_SHELL_VERBOSE_OPTS) $(OA_SHELL_DEBUG_OPTS)
-INCLUDE_PATHS   = -I$(PWD)/include
+INCLUDE_PATHS   = -I$(PWD)/include -I$(PWD)/../oam/_inc
 
 CL                    = cl6x.orig
 OA_SHELL              = clacc
@@ -21,8 +21,7 @@ OA_SHELL_TMP_FILES    = *.out __TI_CLACC_KERNEL.c *.cl *.asm *.dsp_h \
                         *.bc *.objc *.if *.map *.opt *.int.c *.o *.obj
 
 # temporary workaround for locale bug
-LC_ALL?=C
-export LC_ALL
+export LC_ALL=C
 
 CC_ARM_OPTS     = -march=armv7-a -mtune=cortex-a15 -mfloat-abi=hard -mfpu=vfp
 
@@ -37,13 +36,22 @@ OA_HL_OPTS      = -lm
 
 OA_SHELL_OPTS   = $(OA_SHELL_FLAGS) --hc="$(OA_HC_OPTS)" --tc="$(OA_TC_OPTS)" --hl="$(OA_HL_OPTS)" --tl="$(OA_TL_OPTS)"
 
+BASE_OAM_LIB		= liboam.a
+
 EXE         = offload.bin
 HOST_CODE   = offload_main.cpp
 TARGET_CODE = offload_target.c
 OBJS        = $(patsubst %.cpp, %.o, $(HOST_CODE))
 
-$(EXE): $(OBJS)
-	$(OA_SHELL) $(OA_SHELL_OPTS) $(OBJS) $(TARGET_CODE) -o $@
+all: $(EXE)
+
+$(BASE_OAM_LIB):
+	$(MAKE) -C ../oam
+	cp ../oam/*.a .
+
+
+$(EXE): $(OBJS) $(BASE_OAM_LIB)
+	$(OA_SHELL) $(OA_SHELL_OPTS) $(OBJS) $(TARGET_CODE) $(BASE_OAM_LIB) -o $@
 
 %.o: %.cpp
 	$(CPP) $(CPP_OPTS) -c $<
@@ -55,7 +63,10 @@ deploy: $(EXE)
 	@scp $(EXE) evm:~/run/offload/
 
 clean:
-	@rm -f $(EXE) $(OA_SHELL_TMP_FILES) *.log
+	$(MAKE) -C ../oam clean
+	@rm -f $(EXE) $(OA_SHELL_TMP_FILES) *.log *.a *.bin
+	@find -name '*.rl' -exec rm {} \;
+	@find -name '*.pp' -exec rm {} \;
 
 help:
 	@echo "options:      verbose=1           verbose build log messages"

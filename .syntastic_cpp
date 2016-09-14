@@ -1,7 +1,7 @@
 -std=c++11
 -I/opt/ti-processor-sdk-linux-am57xx-evm-03.00.00.04/targetNFS/usr/include
 -I/opt/ti-processor-sdk-linux-am57xx-evm-03.00.00.04/targetNFS/usr/share/ti/openmpacc/dsp/include
--I/home/fuchsto/workspaces/ti-oam-experiments.git/base/_inc/
+-I/home/fuchsto/workspaces/ti-oam-experiments.git/oam/_inc/
 -Wall
 -pedantic
 -Wextra

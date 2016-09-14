@@ -1,9 +1,17 @@
-#ifndef BASE__TIMESTAMP_H_
-#define BASE__TIMESTAMP_H_
+#ifndef OAM__OAM_TIME_H__INCLUDED
+#define OAM__OAM_TIME_H__INCLUDED
 
-#include <base/types.h>
+#include <oam/oam_types.h>
+#include <omp.h>
 
-static inline ts_t timestamp()
+typedef double ts_t;
+
+/**
+ * Returns a current time stamp.
+ * Note that time measurements at host and target are unrelated and cannot
+ * be compared.
+ */
+static inline ts_t oam_timestamp()
 {
   /* Alternative methods to obtain timestamp: */
 
@@ -42,17 +50,19 @@ static inline ts_t timestamp()
 #endif
 }
 
-static inline double time_elapsed_since(ts_t ts_start)
+/**
+ * Elapsed time since specified time stamp, in seconds.
+ */
+static inline double oam_elapsed_since(ts_t ts_start)
 {
   /* Apply frequency scaling and/or unit conversion to seconds here if
    * necessary, depending on implementation of timestamp(). */
 
 #if 1
-  return (double)(timestamp() - ts_start);
+  return (double)(oam_timestamp() - ts_start);
 #else
   return (double)((timestamp() - ts_start) / ARCH_BOGOMIPS);
 #endif
 }
 
-
-#endif // BASE__TIMESTAMP_H_
+#endif /* OAM__OAM_TIME_H__INCLUDED */

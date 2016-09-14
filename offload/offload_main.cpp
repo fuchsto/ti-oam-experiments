@@ -17,9 +17,8 @@
  */
 #define SYMMETRIC_MEMORY__USE_DDR
 
-#include <base/types.h>
-#include <base/symmetric_memory.h>
-#include <base/timestamp.h>
+#include <oam/oam_vsmem.h>
+#include <oam/oam_time.h>
 
 #include "offload_target.h"
 
@@ -73,8 +72,8 @@ int main(int argc, char *argv[])
 
   if (use_sym_heap) {
     std::cout << "Using symmetric heap ";
-    symmetric_heap_a = (char *)(symmetric_malloc(sym_heap_a_size));
-    symmetric_heap_b = (char *)(symmetric_malloc(sym_heap_b_size));
+    symmetric_heap_a = (char *)(oam_vsmem__symmetric_malloc(sym_heap_a_size));
+    symmetric_heap_b = (char *)(oam_vsmem__symmetric_malloc(sym_heap_b_size));
   } else {
     std::cout << "Allocating buffer at host ";
     symmetric_heap_a = (char *)(malloc(sym_heap_a_size));
@@ -92,8 +91,8 @@ int main(int argc, char *argv[])
             << std::endl;
 
   if (use_sym_heap) {
-    symmetric_heap_init(symmetric_heap_a, sym_heap_a_size);
-//  symmetric_heap_init(symmetric_heap_b, sym_heap_b_size);
+    oam_vsmem__symmetric_heap_init(symmetric_heap_a, sym_heap_a_size);
+//  oam_vsmem__symmetric_heap_init(symmetric_heap_b, sym_heap_b_size);
   }
 
   for (int i = 0; i < sym_heap_a_size; i++) {
@@ -101,7 +100,7 @@ int main(int argc, char *argv[])
   }
 
   for (int i = 0; i < sym_heap_b_size; i++) {
-    symmetric_heap_b[i] = (char)(255 - (i % 255));
+//  symmetric_heap_b[i] = (char)(255 - (i % 255));
   }
 
   /* ---------------------------------------------------------------------- *
@@ -114,18 +113,18 @@ int main(int argc, char *argv[])
   for (int i = 0; i < num_repeat; i++) {
     ts_t target_start;
 
-    target_start = timestamp();
+    target_start = oam_timestamp();
     {
-//     data_map_target(symmetric_heap_a, symmetric_heap_a + buffer_size_a,
-//                     buffer_size_a);
+      data_map_target(symmetric_heap_a, symmetric_heap_a + buffer_size_a,
+                      buffer_size_a);
     }
-    oam_target_map_durations.push_back(time_elapsed_since(target_start));
+    oam_target_map_durations.push_back(oam_elapsed_since(target_start));
 
-    target_start = timestamp();
-    {
+    target_start = oam_timestamp();
+    if (use_sym_heap) {
       sym_alloc_target(sym_heap_a_size, sym_heap_b_size);
     }
-    oam_sym_alloc_durations.push_back(time_elapsed_since(target_start));
+    oam_sym_alloc_durations.push_back(oam_elapsed_since(target_start));
   }
 
   /* ---------------------------------------------------------------------- *
@@ -139,8 +138,8 @@ int main(int argc, char *argv[])
    * ---------------------------------------------------------------------- */
 
   if (use_sym_heap) {
-    symmetric_free(symmetric_heap_a);
-    symmetric_free(symmetric_heap_b);
+    oam_vsmem__symmetric_free(symmetric_heap_a);
+    oam_vsmem__symmetric_free(symmetric_heap_b);
   } else {
     free(symmetric_heap_a);
     free(symmetric_heap_b);

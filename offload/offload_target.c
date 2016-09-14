@@ -6,10 +6,8 @@
  * Type definitions and macros do not have to be included in a
  * `omp declare target` region.
  */
-#include <base/config.h>
-#include <base/types.h>
-#include <base/macro.h>
-#include <base/logging.h>
+#include <oam/logging.h>
+#include <oam/oam_vsmem.h>
 
 
 /* ======================================================================== *
@@ -38,8 +36,6 @@
 # include <stdio.h>
 # include <omp.h>
 
-#include <base/symmetric_memory.h>
-
 #pragma omp end declare target
 
 void data_map_target(
@@ -63,26 +59,29 @@ void sym_alloc_target(
 {
   #pragma omp target map(to: size_a, size_b)
   {
-    int size = 5; // size_a; // + size_b;
+    int   size  = 16; // size_a; // + size_b;
 
-    int    i, k;
-    char * buffer = symmetric_malloc(size);
+    if (size < sizeof(int)) { size = sizeof(int); }
 
-    printf("Target: symmetric_malloc(%d) -> %p\n", size, (void *)buffer);
+    int   nelem = size / sizeof(int);
 
-    for (i = 0; i < size; i++) {
-      buffer[i] = 100 + (i % 10);
-      printf("buffer[%d] = %d\n", i, buffer[i]);
+    int * buffer = oam_vsmem__symmetric_malloc(size);
+    printf("target: oam_vsmem__symmetric_malloc(%d) -> %p\n",
+           size, (void *)buffer);
+
+    int   i;
+    for (i = 0; i < nelem; i++) {
+      buffer[i] = i + 1;
     }
-    for (k = 0; k < size; k++) {
-      char expect = 100 + (k % 10);
-      if (buffer[k] != expect) {
+    for (i = 0; i < nelem; i++) {
+      int expect = i + 1;
+      if (buffer[i] != expect) {
         printf("Test of buffer value at offset %d failed: got %d, "
-               "expected %d\n", k, (int)buffer[k], expect);
+               "expected %d\n", i, (int)buffer[i], expect);
         break;
       }
     }
-    symmetric_free(buffer);
+    oam_vsmem__symmetric_free(buffer);
   }
 }
 
