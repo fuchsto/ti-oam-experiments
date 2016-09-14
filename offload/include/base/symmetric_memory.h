@@ -1,6 +1,9 @@
 #ifndef DSP_IMG_FILTER__SYMMETRIC_MEMORY_H__INCLUDED
 #define DSP_IMG_FILTER__SYMMETRIC_MEMORY_H__INCLUDED
 
+
+#define SYMMETRIC_MEMORY__USE_DDR
+
 #pragma omp declare target
 #include <stdlib.h>
 #include <stdio.h>

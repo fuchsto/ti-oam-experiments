@@ -13,7 +13,7 @@ endif
 OA_SHELL_FLAGS  = $(OA_SHELL_VERBOSE_OPTS) $(OA_SHELL_DEBUG_OPTS)
 INCLUDE_PATHS   = -I$(PWD)/include
 
-CL                    = cl6x $(INCLUDE_PATHS)
+CL                    = cl6x.orig
 OA_SHELL              = clacc
 CPP		                = arm-linux-gnueabihf-g++
 CC		                = arm-linux-gnueabihf-gcc

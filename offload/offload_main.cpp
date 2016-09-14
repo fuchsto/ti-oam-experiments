@@ -35,7 +35,8 @@ static void print_kernel_durations(
 
 int main(int argc, char *argv[])
 {
-  int  kb_alloc     = 1024 * 8;
+  int  kb_alloc_a   = 1024 * 8;
+  int  kb_alloc_b   = 1024 * 1;
   int  num_repeat   = 1;
   bool use_sym_heap = true;
 
@@ -45,8 +46,11 @@ int main(int argc, char *argv[])
   }
 
   for (int argi = 1; argi < argc; argi += 2) {
-    if (strcmp(argv[argi], "-k") == 0) {
-      kb_alloc = std::max<int>(1, strtoll(argv[argi + 1], NULL, 10));
+    if (strcmp(argv[argi], "-na") == 0) {
+      kb_alloc_a = std::max<int>(1, strtoll(argv[argi + 1], NULL, 10));
+    }
+    else if (strcmp(argv[argi], "-nb") == 0) {
+      kb_alloc_b = std::max<int>(1, strtoll(argv[argi + 1], NULL, 10));
     }
     else if (strcmp(argv[argi], "-r") == 0) {
       num_repeat = std::max<int>(1, strtoll(argv[argi + 1], NULL, 10));
@@ -60,33 +64,44 @@ int main(int argc, char *argv[])
   /* ---------------------------------------------------------------------- *
    * Symmetric allocation of heap:                                          *
    * ---------------------------------------------------------------------- */
-  int    buffer_size    = 1024 * kb_alloc;
-  int    sym_heap_size  = 2 * buffer_size; /* size of in + out buffers */
-  char * symmetric_heap;
+  int    buffer_size_a    = 1024 * kb_alloc_a;
+  int    buffer_size_b    = 1024 * kb_alloc_b;
+  int    sym_heap_a_size  = 2 * buffer_size_a; /* size of in + out buffers */
+  int    sym_heap_b_size  = 2 * buffer_size_b; /* size of in + out buffers */
+  char * symmetric_heap_a;
+  char * symmetric_heap_b;
 
   if (use_sym_heap) {
     std::cout << "Using symmetric heap ";
-    symmetric_heap = (char *)(symmetric_malloc(sym_heap_size));
+    symmetric_heap_a = (char *)(symmetric_malloc(sym_heap_a_size));
+    symmetric_heap_b = (char *)(symmetric_malloc(sym_heap_b_size));
   } else {
     std::cout << "Allocating buffer at host ";
-    symmetric_heap = (char *)(malloc(sym_heap_size));
+    symmetric_heap_a = (char *)(malloc(sym_heap_a_size));
+    symmetric_heap_b = (char *)(malloc(sym_heap_b_size));
   }
 
   /* ---------------------------------------------------------------------- *
    * Initialize the pre-allocated buffers as new DDR and MSMC heaps         *
    * accesible to DSP cores.                                                *
    * ---------------------------------------------------------------------- */
-  std::cout << "(" << sym_heap_size << " bytes = "
+  std::cout << "(" << sym_heap_a_size << " + " << sym_heap_b_size
+            << " bytes = "
             << std::setprecision(2) << std::fixed
-            << static_cast<double>(sym_heap_size) / 1024 / 1024 << " MB)"
+            << static_cast<double>(sym_heap_a_size) / 1024 / 1024 << " MB)"
             << std::endl;
 
   if (use_sym_heap) {
-    symmetric_heap_init(symmetric_heap, sym_heap_size);
+    symmetric_heap_init(symmetric_heap_a, sym_heap_a_size);
+//  symmetric_heap_init(symmetric_heap_b, sym_heap_b_size);
   }
 
-  for (int i = 0; i < sym_heap_size; i++) {
-    symmetric_heap[i] = (char)(i % 256);
+  for (int i = 0; i < sym_heap_a_size; i++) {
+    symmetric_heap_a[i] = (char)(i % 255);
+  }
+
+  for (int i = 0; i < sym_heap_b_size; i++) {
+    symmetric_heap_b[i] = (char)(255 - (i % 255));
   }
 
   /* ---------------------------------------------------------------------- *
@@ -94,28 +109,41 @@ int main(int argc, char *argv[])
    * ---------------------------------------------------------------------- */
 
   /* Kernel execution time in single repeats for median and stddev: */
-  std::vector<double> target_durations;
+  std::vector<double> oam_target_map_durations;
+  std::vector<double> oam_sym_alloc_durations;
   for (int i = 0; i < num_repeat; i++) {
-    ts_t target_start = timestamp();
+    ts_t target_start;
 
-    offload_target(symmetric_heap, symmetric_heap + buffer_size, buffer_size);
+    target_start = timestamp();
+    {
+//     data_map_target(symmetric_heap_a, symmetric_heap_a + buffer_size_a,
+//                     buffer_size_a);
+    }
+    oam_target_map_durations.push_back(time_elapsed_since(target_start));
 
-    target_durations.push_back(time_elapsed_since(target_start));
+    target_start = timestamp();
+    {
+      sym_alloc_target(sym_heap_a_size, sym_heap_b_size);
+    }
+    oam_sym_alloc_durations.push_back(time_elapsed_since(target_start));
   }
 
   /* ---------------------------------------------------------------------- *
    * Print time measurements summary:                                       *
    * ---------------------------------------------------------------------- */
-  print_kernel_durations("target latency", target_durations);
+  print_kernel_durations("target map latency",      oam_target_map_durations);
+  print_kernel_durations("symmetric alloc latency", oam_sym_alloc_durations);
 
   /* ---------------------------------------------------------------------- *
    * Finalize:                                                              *
    * ---------------------------------------------------------------------- */
 
   if (use_sym_heap) {
-    symmetric_free(symmetric_heap);
+    symmetric_free(symmetric_heap_a);
+    symmetric_free(symmetric_heap_b);
   } else {
-    free(symmetric_heap);
+    free(symmetric_heap_a);
+    free(symmetric_heap_b);
   }
 
   return EXIT_SUCCESS;
@@ -138,8 +166,6 @@ static void print_kernel_durations(
   const std::string   & name,
   std::vector<double> & durations)
 {
-  typedef const std::vector<double> vec_t;
-
   using std::cout;
   using std::endl;
   using std::setw;
@@ -151,7 +177,9 @@ static void print_kernel_durations(
   double median  = durations[durations.size() / 2];
   /* Equivalent to std::minmax available since C++11: */
   double min     = durations.front();
-  double pre_max = durations[durations.size() - 2];
+  double pre_max = (durations.size() >= 2)
+                      ? durations[durations.size() - 2]
+                      : durations.back();
   double max     = durations.back();
 
   double min_us     = min     * 1.0e6;

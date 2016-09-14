@@ -38,9 +38,11 @@
 # include <stdio.h>
 # include <omp.h>
 
+#include <base/symmetric_memory.h>
+
 #pragma omp end declare target
 
-void offload_target(
+void data_map_target(
   char * in_buffer,
   char * out_buffer,
   int    size)
@@ -50,9 +52,38 @@ void offload_target(
   {
     #pragma omp single
     {
-      out_buffer[0]        += in_buffer[0];
-//    out_buffer[size - 1] += in_buffer[size - 1];
+      out_buffer[0] += in_buffer[0];
     }
   }
 }
+
+void sym_alloc_target(
+  int    size_a,
+  int    size_b)
+{
+  #pragma omp target map(to: size_a, size_b)
+  {
+    int size = 5; // size_a; // + size_b;
+
+    int    i, k;
+    char * buffer = symmetric_malloc(size);
+
+    printf("Target: symmetric_malloc(%d) -> %p\n", size, (void *)buffer);
+
+    for (i = 0; i < size; i++) {
+      buffer[i] = 100 + (i % 10);
+      printf("buffer[%d] = %d\n", i, buffer[i]);
+    }
+    for (k = 0; k < size; k++) {
+      char expect = 100 + (k % 10);
+      if (buffer[k] != expect) {
+        printf("Test of buffer value at offset %d failed: got %d, "
+               "expected %d\n", k, (int)buffer[k], expect);
+        break;
+      }
+    }
+    symmetric_free(buffer);
+  }
+}
+
 
