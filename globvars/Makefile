@@ -49,14 +49,14 @@ BASE_OAM_LIB			= liboam.a
 
 # LIB_OWNER				= lib_owner.a
 LIB_CLIENT				= lib_client_target.t.a
-LIB_OWNER					= lib_owner_target.t.a
+LIB_OWNER_T				= lib_owner_target.t.a
+LIB_OWNER_H				= lib_owner_host.a
 
 LIB_OWNER_H_SRC		= lib_owner_host.c
 LIB_OWNER_T_SRC		= lib_owner_target.c
 LIB_CLIENT_T_SRC	= lib_client_target.c
 
 HOST_CODE					= globvars_main.cpp
-# TARGET_CODE			= globvars_target.c
 
 EXE								= globvars.bin
 
@@ -69,10 +69,11 @@ $(BASE_OAM_LIB):
 	$(MAKE) -C ../oam/tioamlinux.oam
 	@cp ../oam/tioamlinux.oam/*.a .
 
-$(EXE): $(OBJS) $(LIB_OWNER) $(LIB_CLIENT) $(BASE_OAM_LIB)
+$(EXE): $(OBJS) $(LIB_OWNER_H) $(LIB_OWNER_T) $(LIB_CLIENT) $(BASE_OAM_LIB)
 	$(OA_SHELL) $(OA_SHELL_OPTS) \
 							$(OBJS) \
-							$(LIB_OWNER) $(LIB_CLIENT) \
+							$(LIB_OWNER_H) $(LIB_OWNER_T) \
+							$(LIB_CLIENT) \
 							$(BASE_OAM_LIB) \
 							-o $@
 
@@ -83,7 +84,7 @@ $(LIB_CLIENT): $(BASE_OAM_LIB)
 	$(OA_SHELL) $(OA_SHELL_OPTS) --make_lib $(LIB_CLIENT_T_SRC) \
 							-o $@ $(BASE_OAM_LIB)
 
-$(LIB_OWNER): $(BASE_OAM_LIB)
+$(LIB_OWNER_T): $(BASE_OAM_LIB)
 	$(OA_SHELL) $(OA_SHELL_OPTS) --make_lib $(LIB_OWNER_T_SRC) \
 							-o $@ $(BASE_OAM_LIB)
 

@@ -9,7 +9,9 @@ extern "C" {
 #endif
 
 #pragma omp declare target
-char global_target_string[32];
+// Size actually not required to be specified for target-target
+// linkage of global variables.
+extern char global_target_string[128];
 #pragma omp end declare target
 
 #ifdef __cplusplus

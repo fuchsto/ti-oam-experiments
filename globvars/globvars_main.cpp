@@ -18,6 +18,7 @@
 #include <oam/oam_comm.h>
 
 #include "lib_client_target.h"
+#include "lib_owner_host.h"
 
 #define HI_BYTE(num) (((num) & 0x0000FF00) >> 8)
 #define LO_BYTE(num)  ((num) & 0x000000FF)
@@ -63,6 +64,13 @@ int main(int argc, char *argv[])
     array_b[i] = 0;
   }
 
+  /* NOTE:
+   * !! Linking will fail with 'undefined reference to global_host_string'
+   * !! if the variable global_host_string is not referenced in host code
+   * !! like this:
+   */
+  std::cout << "global var from host: " << global_host_string << std::endl;
+
   HostMessage * host_signals = oam_comm__host_signals_new(
                                  poll_interval_us,
                                  timeout_after_us);
@@ -75,14 +83,31 @@ int main(int argc, char *argv[])
   std::vector<double> target_durations;
   std::future<int>    target_future;
 
+  int result;
+
   target_future = std::async(std::launch::async,
                              target_function,
                                array_a,
                                array_b,
                                array_size,
                                host_signals);
+  result = target_future.get();
 
-  int result = target_future.get();
+  target_future = std::async(std::launch::async,
+                             target_function,
+                               array_a,
+                               array_b,
+                               array_size,
+                               host_signals);
+  result = target_future.get();
+
+  target_future = std::async(std::launch::async,
+                             target_function,
+                               array_a,
+                               array_b,
+                               array_size,
+                               host_signals);
+  result = target_future.get();
 
   std::cout << "Task exit code:        " << host_signals->ret << std::endl;
   std::cout << "The irrelevant result: " << result            << std::endl;

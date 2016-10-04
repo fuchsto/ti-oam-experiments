@@ -8,16 +8,5 @@
 #include <oam/logging.h>
 #include <oam/macro.h>
 
-/* ======================================================================== *
- * Begin of Target Function Declarations and Includes                       *
- * ------------------------------------------------------------------------ */
-#pragma omp declare target
-
-char global_host_string[32] = "global host string";
-
-#pragma omp end declare target
-
-/* ------------------------------------------------------------------------ *
- * End of Target Function Declarations and Includes                         *
- * ======================================================================== */
+char global_host_string[128] = "global var from lib_owner_host.a";
 

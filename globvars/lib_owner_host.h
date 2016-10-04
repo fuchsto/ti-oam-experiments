@@ -5,9 +5,7 @@
 extern "C" {
 #endif
 
-#pragma omp declare target
-char global_host_string[32];
-#pragma omp end declare target
+extern char global_host_string[128];
 
 #ifdef __cplusplus
 } // extern "C"

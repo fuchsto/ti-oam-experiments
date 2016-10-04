@@ -20,7 +20,7 @@
 
 #pragma omp end declare target
 
-char global_string[32] = "global string";
+char global_target_string[128] = "global var from lib_owner_target.t.a";
 
 /* ------------------------------------------------------------------------ *
  * End of Target Function Declarations and Includes                         *
