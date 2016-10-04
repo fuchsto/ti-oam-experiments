@@ -2,6 +2,7 @@
 #include <oam/oam_comm.h>
 #include <oam/oam_vsmem.h>
 #include <oam/oam_types.h>
+#include <oam/oam_time.h>
 #include <oam/macro.h>
 
 #include <stdio.h>
@@ -72,8 +73,12 @@ void oam_comm__update_host_data(
 int oam_comm__poll_interval(
   HostMessage * host_signals)
 {
-  int time_now_us       = (int)(omp_get_wtime() * 1e6);
+  int time_now_us       = oam_timestamp() * 1e6;
+#if defined(_OPENMP)
   int tid               = omp_get_thread_num();
+#else
+  int tid               = 0;
+#endif
   int last_poll_elapsed = time_now_us - host_signals->last_poll_time_us[tid];
   if (host_signals->last_poll_time_us[tid] == 0 ||
       last_poll_elapsed >= host_signals->poll_interval_us) {
@@ -96,11 +101,13 @@ int oam_comm__poll_message(
   if (0 != host_signals->cancel) {
     do_abort = 1;
     host_signals->ret += OMPACC_TASK__CANCEL;
-  } else if (host_signals->timeout_after_us <=
-              (omp_get_wtime() - time_start) * 1e6 &&
-             OMPACC_TASK__TIMEOUT != host_signals->ret) {
-    do_abort = 1;
-    host_signals->ret += OMPACC_TASK__TIMEOUT;
+  } else if (host_signals->timeout_after_us > 0) {
+    int time_now_us     = oam_timestamp() * 1e6;
+    int task_elapsed_us = time_now_us - (time_start * 1e6);
+    if (host_signals->timeout_after_us <= task_elapsed_us) {
+      do_abort = 1;
+      host_signals->ret = OMPACC_TASK__TIMEOUT;
+    }
   }
   return do_abort;
 }

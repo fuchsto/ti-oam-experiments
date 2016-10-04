@@ -1,0 +1,21 @@
+#ifndef CLIENT_TARGET_H_
+#define CLIENT_TARGET_H_
+
+#include <oam/oam_types.h>
+#include <oam/oam_task.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+int target_function(
+  char        * in_buffer,
+  char        * out_buffer,
+  int           size,
+  HostMessage * host_message_buf);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
+#endif

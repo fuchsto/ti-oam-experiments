@@ -32,8 +32,6 @@ char * strrchr(const char *, int);
 #define LOG_HOST__LINE_FIELD_WIDTH        5
 #define LOG_HOST__MAX_MESSAGE_SIZE      128
 
-#if defined(MV_LOG__ENABLED)
-
 #define LOG_HOST_MSG__(level, ...) \
   do { \
     char msg_buf[LOG_HOST__MAX_MESSAGE_SIZE+1]; \
@@ -70,33 +68,35 @@ char * strrchr(const char *, int);
       msg_buf); \
   } while (0)
 
-#else /* defined(MV_LOG__ENABLED) */
+/* Warning and Error log levels are always enabled */
+#define LOG_HOST_ERROR(...)    LOG_HOST_MSG__("ERROR", __VA_ARGS__)
+#define LOG_HOST_WARN(...)     LOG_HOST_MSG__("WARN",  __VA_ARGS__)
+#define LOG_TARGET_ERROR(...)  LOG_TARGET_MSG__("ERROR", __VA_ARGS__)
+#define LOG_TARGET_WARN(...)   LOG_TARGET_MSG__("WARN",  __VA_ARGS__)
 
-#define LOG_HOST_MSG__(level, ...)   do { } while(0)
-#define LOG_TARGET_MSG__(level, ...) do { } while(0)
+#if defined(MV_LOG__ENABLED)
+# define LOG_HOST_DEBUG(...)   LOG_HOST_MSG__("DEBUG", __VA_ARGS__)
+# define LOG_HOST_INFO(...)    LOG_HOST_MSG__("INFO",  __VA_ARGS__)
+# define LOG_TARGET_DEBUG(...) LOG_TARGET_MSG__("DEBUG", __VA_ARGS__)
+# define LOG_TARGET_INFO(...)  LOG_TARGET_MSG__("INFO",  __VA_ARGS__)
+#else
+# define LOG_HOST_DEBUG(...)   do { } while(0)
+# define LOG_HOST_INFO(...)    do { } while(0)
+# define LOG_TARGET_DEBUG(...) do { } while(0)
+# define LOG_TARGET_INFO(...)  do { } while(0)
+#endif /* defined(MV_LOG__ENABLED) */
 
-#endif
-
-#define LOG_HOST_DEBUG(...)   LOG_HOST_MSG__("DEBUG", __VA_ARGS__)
-#define LOG_HOST_INFO(...)    LOG_HOST_MSG__("INFO",  __VA_ARGS__)
-#define LOG_HOST_WARN(...)    LOG_HOST_MSG__("WARN",  __VA_ARGS__)
-#define LOG_HOST_ERROR(...)   LOG_HOST_MSG__("ERROR", __VA_ARGS__)
-
-#define LOG_TARGET_DEBUG(...) LOG_TARGET_MSG__("DEBUG", __VA_ARGS__)
-#define LOG_TARGET_INFO(...)  LOG_TARGET_MSG__("INFO",  __VA_ARGS__)
-#define LOG_TARGET_WARN(...)  LOG_TARGET_MSG__("WARN",  __VA_ARGS__)
-#define LOG_TARGET_ERROR(...) LOG_TARGET_MSG__("ERROR", __VA_ARGS__)
 
 #if defined(OMPACC_TARGET)
-#  define LOG_DEBUG(...)      LOG_TARGET_DEBUG(__VA_ARGS__)
-#  define LOG_INFO(...)       LOG_TARGET_INFO(__VA_ARGS__)
-#  define LOG_WARN(...)       LOG_TARGET_WARN(__VA_ARGS__)
-#  define LOG_ERROR(...)      LOG_TARGET_ERROR(__VA_ARGS__)
+#  define LOG_DEBUG(...)       LOG_TARGET_DEBUG(__VA_ARGS__)
+#  define LOG_INFO(...)        LOG_TARGET_INFO(__VA_ARGS__)
+#  define LOG_WARN(...)        LOG_TARGET_WARN(__VA_ARGS__)
+#  define LOG_ERROR(...)       LOG_TARGET_ERROR(__VA_ARGS__)
 #else
-#  define LOG_DEBUG(...)      LOG_HOST_DEBUG(__VA_ARGS__)
-#  define LOG_INFO(...)       LOG_HOST_INFO(__VA_ARGS__)
-#  define LOG_WARN(...)       LOG_HOST_WARN(__VA_ARGS__)
-#  define LOG_ERROR(...)      LOG_HOST_ERROR(__VA_ARGS__)
+#  define LOG_DEBUG(...)       LOG_HOST_DEBUG(__VA_ARGS__)
+#  define LOG_INFO(...)        LOG_HOST_INFO(__VA_ARGS__)
+#  define LOG_WARN(...)        LOG_HOST_WARN(__VA_ARGS__)
+#  define LOG_ERROR(...)       LOG_HOST_ERROR(__VA_ARGS__)
 #endif
 
 #endif // OAM__LOGGING_H__INCLUDED

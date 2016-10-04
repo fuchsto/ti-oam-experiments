@@ -1,10 +1,20 @@
 #ifndef OAM__OAM_TIME_H__INCLUDED
 #define OAM__OAM_TIME_H__INCLUDED
 
+#if !defined(_OPENMP) && defined(ARMLINUX)
+// #pragma message "Using clock_gettime in oam_timestamp"
+#  include <time.h>
+#  include <sched.h>
+#  include <sys/time.h>
+#endif
+
 #include <oam/oam_types.h>
 #include <omp.h>
 
+#pragma omp declare target
 typedef double ts_t;
+static inline ts_t oam_timestamp();
+#pragma omp end declare target
 
 /**
  * Returns a current time stamp.
@@ -15,21 +25,34 @@ static inline ts_t oam_timestamp()
 {
   /* Alternative methods to obtain timestamp: */
 
-#if 0
-  /* - Using clock_gettime
+#if defined(_OPENMP) || defined(OMPACC)
+  /* - Any target with OpenMP support, or OpenMP accelerator model explicitly
+   *   enabled in build. Using the wrapper provided by OpenMP interface.
+   *
+   * ! NOTE that clock resolutions (see omp_get_wtick) differ between
+   * ! host and target. Comparison of elapsed time spans measured with
+   * ! omp_get_wtime will not give meaningful results.
+   */
+  return omp_get_wtime();
+#elif defined(ARMLINUX)
+  /* - ARM target but no OpenMP support, using clock_gettime provided by
+   *   Linux base system.
    *
    * ! NOTE that this requires linker flag -lrt which is not supported by
    * ! cl6x target compiler.
    */
+# if TODO__FIX_ME
   struct timespec ts;
   long long timestamp;
   clock_gettime(CLOCK_REALTIME, &ts); /* or: CLOCK_MONOTONIC */
   timestamp = ts.tv_sec * 1000000000LL + ts.tv_nsec;
-  return timestamp;
-#endif
-
-#if 0
-  /* - Using CPU cycle counter (TLSC on ARM, RDTSC on x64) wrapper provided
+  return (double)(timestamp) * 1.0e-6;
+# else
+  return 0;
+# endif
+#else
+  /* - Non-Linux target without OpenMP support, assuming DSP build.
+   *   Using CPU cycle counter (TLSC on ARM, RDTSC on x64) wrapper provided
    *   by underlying OpenCL runtime.
    *   Divide elapsed ticks by bogomips for unit conversion to seconds.
    *
@@ -37,16 +60,6 @@ static inline ts_t oam_timestamp()
    * ! but not actual elapsed wall-clock time.
    */
   return __clock64();
-#endif
-
-#if 1
-  /* - Using the wrapper provided by OpenMP interface.
-   *
-   * ! NOTE that clock resolutions (see omp_get_wtick) differ between
-   * ! host and target. Comparison of elapsed time spans measured with
-   * ! omp_get_wtime will not give meaningful results.
-   */
-  return omp_get_wtime();
 #endif
 }
 

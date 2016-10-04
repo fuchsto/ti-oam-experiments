@@ -22,8 +22,6 @@
 
 #include "offload_target.h"
 
-#define HI_BYTE(num) (((num) & 0x0000FF00) >> 8)
-#define LO_BYTE(num)  ((num) & 0x000000FF)
 
 static void print_usage();
 

@@ -43,8 +43,8 @@ INCLUDE_PATHS					= -I./_inc \
 CPPFLAGS						 := $(CPPFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS)
 CFLAGS							 := $(CFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS)
 
-OA_TC_OPTS						= $(INCLUDE_PATHS) $(CC_DFLAGS)
-OA_HC_OPTS						= $(INCLUDE_PATHS) $(CC_DFLAGS) $(CC_ARM_OPTS) \
+OA_TC_OPTS						= $(INCLUDE_PATHS) $(CC_DFLAGS) -DOMPACC
+OA_HC_OPTS						= $(INCLUDE_PATHS) $(CC_DFLAGS) -DOMPACC $(CC_ARM_OPTS) \
 												-Wall -Wextra -Wno-empty-body -Wno-unused-parameter \
 												-fopenmp
 
@@ -59,9 +59,9 @@ OA_SHELL_OPTS					= $(OA_SHELL_FLAGS) \
 
 OA_SHELL_LIB_OPTS			= $(OA_SHELL_OPTS) --make_lib
 
-SOURCE_DIR						= ./_src
+SOURCE_DIR						= ../_src
 LIB_DIR								= ./
-BUILD_DIR							= .
+BUILD_DIR							= build
 
 HOST_CODE							= $(SOURCE_DIR)/oam_task.c
 
