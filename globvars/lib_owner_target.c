@@ -18,11 +18,20 @@
 
 #include "ti_omp_device.h"
 
-char global_string[32] = "global string";
-
 #pragma omp end declare target
+
+char global_string[32] = "global string";
 
 /* ------------------------------------------------------------------------ *
  * End of Target Function Declarations and Includes                         *
  * ======================================================================== */
 
+void sentinel_target_region(int a)
+{
+  int ret = 0;
+  #pragma omp target
+  {
+    ret += a;
+  }
+  return ret;
+}

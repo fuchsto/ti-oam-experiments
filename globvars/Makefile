@@ -27,39 +27,40 @@ OA_SHELL_TMP_FILES    = *.out __TI_CLACC_KERNEL.c *.cl *.asm *.dsp_h \
 
 export LC_ALL=C
 
-CC_ARM_OPTS     = -march=armv7-a -mtune=cortex-a15 -mfloat-abi=hard -mfpu=vfp
+CC_ARM_OPTS				= -march=armv7-a -mtune=cortex-a15 -mfloat-abi=hard -mfpu=vfp
 
-CPP_OPTS        = $(INCLUDE_PATHS) $(CC_DFLAGS) $(CC_ARM_OPTS) -std=c++11 -fopenmp
-CC_OPTS         = $(INCLUDE_PATHS) $(CC_DFLAGS) -fopenmp
+CPP_OPTS					= $(INCLUDE_PATHS) $(CC_DFLAGS) $(CC_ARM_OPTS) -std=c++11 -fopenmp
+CC_OPTS						= $(INCLUDE_PATHS) $(CC_DFLAGS) -fopenmp
 
-OA_TC_OPTS      = $(INCLUDE_PATHS) $(CC_DFLAGS) -DOMPACC
-OA_HC_OPTS      = $(INCLUDE_PATHS) $(CC_DFLAGS) -DOMPACC $(CC_ARM_OPTS) \
-									-Wall -Wextra -fopenmp -ffast-math
+OA_TC_OPTS				= $(INCLUDE_PATHS) $(CC_DFLAGS) -DOMPACC
+OA_HC_OPTS				= $(INCLUDE_PATHS) $(CC_DFLAGS) -DOMPACC $(CC_ARM_OPTS) \
+										-Wall -Wextra -fopenmp -ffast-math
 
-OA_TL_OPTS			= $(LIBRARY_PATHS)
-OA_HL_OPTS			= $(LIBRARY_PATHS)
+OA_TL_OPTS				= $(LIBRARY_PATHS)
+OA_HL_OPTS				= $(LIBRARY_PATHS)
 
-OA_SHELL_OPTS   = $(OA_SHELL_FLAGS) \
-									--hc="$(OA_HC_OPTS)" \
-									--tc="$(OA_TC_OPTS)" \
-									--hl="$(OA_HL_OPTS)" \
-									--tl="$(OA_TL_OPTS)"
+OA_SHELL_OPTS			= $(OA_SHELL_FLAGS) \
+										--hc="$(OA_HC_OPTS)" \
+										--tc="$(OA_TC_OPTS)" \
+										--hl="$(OA_HL_OPTS)" \
+										--tl="$(OA_TL_OPTS)"
 
-BASE_OAM_LIB		= liboam.a
+BASE_OAM_LIB			= liboam.a
 
 # LIB_OWNER				= lib_owner.a
-LIB_CLIENT			= lib_client_target.t.a
-# LIB_OWNER				= lib_owner_target.t.a
+LIB_CLIENT				= lib_client_target.t.a
+LIB_OWNER					= lib_owner_target.t.a
 
 LIB_OWNER_H_SRC		= lib_owner_host.c
-LIB_CLIENT_T_SRC	= lib_client_target.c lib_owner_target.c
+LIB_OWNER_T_SRC		= lib_owner_target.c
+LIB_CLIENT_T_SRC	= lib_client_target.c
 
-HOST_CODE				= globvars_main.cpp
+HOST_CODE					= globvars_main.cpp
 # TARGET_CODE			= globvars_target.c
 
-EXE							= globvars.bin
+EXE								= globvars.bin
 
-OBJS						= $(patsubst %.cpp, %.o, $(HOST_CODE))
+OBJS							= $(patsubst %.cpp, %.o, $(HOST_CODE))
 
 
 all: $(EXE) $(LIB_OWNER) $(LIB_CLIENT)
@@ -80,6 +81,10 @@ $(EXE): $(OBJS) $(LIB_OWNER) $(LIB_CLIENT) $(BASE_OAM_LIB)
 
 $(LIB_CLIENT): $(BASE_OAM_LIB)
 	$(OA_SHELL) $(OA_SHELL_OPTS) --make_lib $(LIB_CLIENT_T_SRC) \
+							-o $@ $(BASE_OAM_LIB)
+
+$(LIB_OWNER): $(BASE_OAM_LIB)
+	$(OA_SHELL) $(OA_SHELL_OPTS) --make_lib $(LIB_OWNER_T_SRC) \
 							-o $@ $(BASE_OAM_LIB)
 
 %.a: %.o

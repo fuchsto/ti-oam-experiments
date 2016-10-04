@@ -32,7 +32,7 @@ int target_function(
   int           size,
   HostMessage * host_signals)
 {
-  int acc;
+  int acc = 0;
   #pragma omp target data map(to:     in_buffer[0:size], size) \
                           map(from:   out_buffer[0:size], acc) \
                           map(tofrom: host_signals[0:1])
