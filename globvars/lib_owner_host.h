@@ -1,15 +1,12 @@
-#ifndef OWNER_TARGET_H_
-#define OWNER_TARGET_H_
-
-#include <oam/oam_types.h>
-#include <oam/oam_task.h>
+#ifndef OWNER_HOST_H_
+#define OWNER_HOST_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #pragma omp declare target
-char global_target_string[32];
+char global_host_string[32];
 #pragma omp end declare target
 
 #ifdef __cplusplus

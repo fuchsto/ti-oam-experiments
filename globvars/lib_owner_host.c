@@ -1,5 +1,5 @@
 
-#include "lib_owner_target.h"
+#include "lib_owner_host.h"
 
 #include <oam/oam_config.h>
 #include <oam/oam_types.h>
@@ -12,13 +12,8 @@
  * Begin of Target Function Declarations and Includes                       *
  * ------------------------------------------------------------------------ */
 #pragma omp declare target
-#include <stdlib.h>
-#include <stdio.h>
-#include <omp.h>
 
-#include "ti_omp_device.h"
-
-char global_string[32] = "global string";
+char global_host_string[32] = "global host string";
 
 #pragma omp end declare target
 

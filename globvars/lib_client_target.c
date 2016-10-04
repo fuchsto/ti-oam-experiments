@@ -1,5 +1,6 @@
 
-#include "lib_client_target.h"
+// #include "lib_client_target.h"
+#include "lib_owner_host.h"
 #include "lib_owner_target.h"
 
 #include <oam/oam_config.h>
@@ -44,7 +45,10 @@ int target_function(
                          map(tofrom: host_signals[0:1])
       {
         printf("client target section:\n");
-        printf("client target global_string: '%s':\n", global_string);
+//      printf("client target global_host_string: '%s':\n",
+//             global_host_string);
+        printf("client target global_target_string: '%s':\n",
+               global_target_string);
       } // omp target
     }
 

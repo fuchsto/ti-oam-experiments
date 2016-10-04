@@ -1,7 +1,7 @@
 # include ../make.inc
 
 
-export MV460_BASE=".."
+export MV460_BASE=$(PWD)/..
 
 
 ifeq (1,$(verbose))
@@ -16,9 +16,9 @@ endif
 
 OA_SHELL_FLAGS  = $(OA_SHELL_VERBOSE_OPTS) $(OA_SHELL_DEBUG_OPTS)
 INCLUDE_PATHS   = -I$(PWD)/include -I../oam/_inc/
-LIBRARY_PATHS   = -L$(PWD)../oam/_lib
+LIBRARY_PATHS   = -L$(PWD)/../oam/
 
-CL                    = cl6x $(INCLUDE_PATHS)
+CL                    = cl6x
 OA_SHELL              = clacc
 CPP		                = arm-linux-gnueabihf-g++
 CC		                = arm-linux-gnueabihf-gcc
@@ -45,12 +45,14 @@ OA_SHELL_OPTS   = $(OA_SHELL_FLAGS) \
 									--hl="$(OA_HL_OPTS)" \
 									--tl="$(OA_TL_OPTS)"
 
+BASE_OAM_LIB		= liboam.a
+
 # LIB_OWNER				= lib_owner.a
 LIB_CLIENT			= lib_client_target.t.a
-LIB_OWNER				= lib_owner_target.a
+# LIB_OWNER				= lib_owner_target.t.a
 
-LIB_OWNER_SRC		= lib_owner_target.c
-LIB_CLIENT_SRC	= lib_client_target.c
+LIB_OWNER_H_SRC		= lib_owner_host.c
+LIB_CLIENT_T_SRC	= lib_client_target.c lib_owner_target.c
 
 HOST_CODE				= globvars_main.cpp
 # TARGET_CODE			= globvars_target.c
@@ -63,19 +65,22 @@ OBJS						= $(patsubst %.cpp, %.o, $(HOST_CODE))
 all: $(EXE) $(LIB_OWNER) $(LIB_CLIENT)
 
 $(BASE_OAM_LIB):
-	$(MAKE) -C ../oam
-	@cp ../oam/_lib/*.a .
+	$(MAKE) -C ../oam/tioamlinux.oam
+	@cp ../oam/tioamlinux.oam/*.a .
 
-$(EXE): $(OBJS) $(LIB_OWNER) $(LIB_CLIENT)
+$(EXE): $(OBJS) $(LIB_OWNER) $(LIB_CLIENT) $(BASE_OAM_LIB)
 	$(OA_SHELL) $(OA_SHELL_OPTS) \
 							$(OBJS) \
-							$(LIB_OWNER) $(LIB_CLIENT) -o $@
+							$(LIB_OWNER) $(LIB_CLIENT) \
+							$(BASE_OAM_LIB) \
+							-o $@
 
 #							$(TARGET_CODE) -o $@
 
 
-%.t.a: %.c
-	$(OA_SHELL) $(OA_SHELL_OPTS) --make_lib $< -o $@
+$(LIB_CLIENT): $(BASE_OAM_LIB)
+	$(OA_SHELL) $(OA_SHELL_OPTS) --make_lib $(LIB_CLIENT_T_SRC) \
+							-o $@ $(BASE_OAM_LIB)
 
 %.a: %.o
 	${AR} ${ARFLAGS} $@ $<
@@ -87,7 +92,8 @@ $(EXE): $(OBJS) $(LIB_OWNER) $(LIB_CLIENT)
 	$(CC) $(CC_OPTS) -c $<
 
 clean:
-	@rm -f $(EXE) $(OA_SHELL_TMP_FILES) *.log
+	@rm -f $(EXE) $(OA_SHELL_TMP_FILES) *.log *.rl *.pp *.a *.c.orig *.int.c
+	$(MAKE) -C ../oam/tioamlinux.oam clean
 
 help:
 	@echo "options:      verbose=1           verbose build log messages"
