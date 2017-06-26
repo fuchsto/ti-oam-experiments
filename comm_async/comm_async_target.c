@@ -2,12 +2,12 @@
 
 #include "comm_async_target.h"
 
-#include <base/macro.h>
-#include <base/logging.h>
+#include <oam/macro.h>
+#include <oam/logging.h>
 
-#include <base/oam_config.h>
-#include <base/oam_types.h>
-#include <base/oam_task_target.h>
+#include <oam/oam_config.h>
+#include <oam/oam_types.h>
+#include <oam/oam_task_target.h>
 
 
 /* ======================================================================== *

@@ -24,8 +24,9 @@ ifeq (1,$(verbose))
 OA_SHELL_VERBOSE_OPTS = --show_cc_opts -v -k
 endif
 ifeq (DEBUG, $(buildtype))
-OA_SHELL_DEBUG_OPTS		= -d -p -g
-CC_DFLAGS							= -DDEBUG -DENABLE_LOGGING
+# OA_SHELL_DEBUG_OPTS		= -d -p -g
+OA_SHELL_DEBUG_OPTS		= -g
+CC_DFLAGS             = -DDEBUG -DMV_LOG__ENABLED -DMV_LOG__OAM__VSMEM # -DMV_LOG__OAM__COMM
 else
 CC_DFLAGS							= -DNDEBUG
 endif

@@ -11,11 +11,11 @@
 
 #include <omp.h>
 
-#include <base/oam_types.h>
-#include <base/oam_vsmem.h>
-#include <base/oam_time.h>
-#include <base/oam_task.h>
-#include <base/oam_comm.h>
+#include <oam/oam_types.h>
+#include <oam/oam_vsmem.h>
+#include <oam/oam_time.h>
+#include <oam/oam_task.h>
+#include <oam/oam_comm.h>
 
 #include "minimal_target.h"
 
@@ -89,8 +89,8 @@ int main(int argc, char *argv[])
   }
 
   HostMessage * host_signals = oam_comm__host_signals_new(
-                                 poll_interval_ms,
-                                 timeout_after_ms);
+                                 poll_interval_ms * 1000,
+                                 timeout_after_ms * 1000);
 
   /* ---------------------------------------------------------------------- *
    * Run kernels on DSPs and record time to completion at host:             *

@@ -1,12 +1,12 @@
 
 #include "minimal_target.h"
 
-#include <base/oam_config.h>
-#include <base/oam_types.h>
-#include <base/oam_task.h>
-#include <base/oam_task_target.h>
-#include <base/logging.h>
-#include <base/macro.h>
+#include <oam/oam_config.h>
+#include <oam/oam_types.h>
+#include <oam/oam_task.h>
+#include <oam/oam_task_target.h>
+#include <oam/logging.h>
+#include <oam/macro.h>
 
 /* ======================================================================== *
  * Begin of Target Function Declarations and Includes                       *

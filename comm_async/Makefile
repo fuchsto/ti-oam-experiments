@@ -4,15 +4,16 @@ ifeq (1,$(verbose))
 OA_SHELL_VERBOSE_OPTS = --show_cc_opts -v -k
 endif
 ifeq (DEBUG, $(buildtype))
-OA_SHELL_DEBUG_OPTS   = -d -p -g
-CC_DFLAGS             = -DDEBUG -DENABLE_LOGGING
+# OA_SHELL_DEBUG_OPTS   = -d -p -g
+OA_SHELL_DEBUG_OPTS   = -g
+CC_DFLAGS             = -DDEBUG -DMV_LOG__ENABLED -DMV_LOG__OAM__VSMEM # -DMV_LOG__OAM__COMM
 else
 CC_DFLAGS             = -DNDEBUG
 endif
 
 OA_SHELL_FLAGS  = $(OA_SHELL_VERBOSE_OPTS) $(OA_SHELL_DEBUG_OPTS)
-INCLUDE_PATHS   = -I$(PWD)/include -I../base/_inc
-LIBRARY_PATHS   = -L$(PWD)../base/_lib -L$(PWD)
+INCLUDE_PATHS   = -I$(PWD)/include -I../oam/_inc
+LIBRARY_PATHS   = -L$(PWD)../oam/_lib -L$(PWD)
 
 CL                    = cl6x $(INCLUDE_PATHS)
 OA_SHELL              = clacc
@@ -25,15 +26,15 @@ export LC_ALL=C
 
 # CC_ARM_OPTS     = -mtune=cortex-a15 -mfloat-abi=hard -mfpu=vfp
 
-CPPFLAGS						 := $(CPPFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS)
+CPPFLAGS						 := $(CPPFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS) -DOMPACC
 CFLAGS							 := $(CFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS)
 
-OA_TC_OPTS      = $(INCLUDE_PATHS) $(CC_DFLAGS)
-OA_HC_OPTS      = $(INCLUDE_PATHS) $(CC_DFLAGS) $(CC_ARM_OPTS) \
+OA_TC_OPTS      = $(INCLUDE_PATHS) $(CC_DFLAGS) -DOMPACC
+OA_HC_OPTS      = $(INCLUDE_PATHS) $(CC_DFLAGS) -DOMPACC $(CC_ARM_OPTS) \
 									-Wall -Wextra -fopenmp -ffast-math
 
-OA_TL_OPTS			= $(LIBRARY_PATHS) -l:liboam.a
-OA_HL_OPTS			= $(LIBRARY_PATHS) -l:liboam.a
+OA_TL_OPTS			= -lm -lrt $(LIBRARY_PATHS) -l:liboam.a
+OA_HL_OPTS			= -lm -lrt $(LIBRARY_PATHS) -l:liboam.a
 
 OA_SHELL_OPTS   = $(OA_SHELL_FLAGS) --hc="$(OA_HC_OPTS)" --tc="$(OA_TC_OPTS)" --hl="$(OA_HL_OPTS)" --tl="$(OA_TL_OPTS)"
 
@@ -53,8 +54,8 @@ $(EXE): $(OBJS) $(BASE_OAM_LIB)
 	$(OA_SHELL) $(OA_SHELL_OPTS) $(OBJS) $(BASE_OAM_LIB) $(TARGET_CODE) -o $@
 
 $(BASE_OAM_LIB):
-	$(MAKE) -C ../base
-	@cp ../base/_lib/*.a .
+	$(MAKE) -C ../oam/tioamlinux.oam
+	@cp ../oam/tioamlinux.oam/*.a .
 
 %.o: %.c
 	@echo "=="
@@ -72,8 +73,8 @@ deploy: $(EXE)
 	scp $(EXE) evm:~/
 
 clean:
-	$(MAKE) -C ../base clean
-	@rm -f $(EXE) $(BASE_OAM_LIB) $(OA_SHELL_TMP_FILES) *.log
+	@rm -f $(EXE) $(OA_SHELL_TMP_FILES) *.log *.rl *.pp *.a *.c.orig *.int.c
+	$(MAKE) -C ../oam/tioamlinux.oam clean
 
 help:
 	@echo "options:      verbose=1           verbose build log messages"

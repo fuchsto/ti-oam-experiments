@@ -16,8 +16,8 @@ extern "C" {
  * poll interval and timeout, in milliseconds.
  */
 HostMessage * oam_comm__host_signals_new(
-  int poll_interval_ms,
-  int timeout_after_ms);
+  int poll_interval_us,
+  int timeout_after_us);
 
 /**
  * Deletes the specified host signals descriptor.

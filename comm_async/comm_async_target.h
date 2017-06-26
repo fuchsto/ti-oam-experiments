@@ -1,7 +1,7 @@
 #ifndef COMM_ASYNC_TARGET_H_
 #define COMM_ASYNC_TARGET_H_
 
-#include <base/oam_types.h>
+#include <oam/oam_types.h>
 
 #ifdef __cplusplus
 extern "C" {
