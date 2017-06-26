@@ -51,10 +51,10 @@ int target_function(
       {
         acc = 0;
         double time_start = omp_get_wtime();
-        double limit_ms = (double)(host_signals->timeout_after_ms);
+        double limit_ms = (double)(host_signals->timeout_after_us) / 1000;
         double time_max = time_start + (limit_ms / 1000.0);
         printf("target time start: %.3f max. ms: %d -> time limit: %.3f\n",
-               time_start, host_signals->timeout_after_ms, time_max);
+               time_start, host_signals->timeout_after_us, time_max);
 
         #pragma omp parallel \
                     shared(host_signals, acc)
@@ -89,10 +89,10 @@ int target_function(
                                      host_signals[0:1])
       {
         double time_start = omp_get_wtime();
-        double limit_ms = (double)(host_signals->timeout_after_ms);
+        double limit_ms = (double)(host_signals->timeout_after_us) / 1000;
         double time_max = time_start + (limit_ms / 1000.0);
         printf("target time start: %.3f max. ms: %d -> time limit: %.3f\n",
-               time_start, host_signals->timeout_after_ms, time_max);
+               time_start, host_signals->timeout_after_us, time_max);
 
         #pragma omp parallel \
                     shared(host_signals, acc)
