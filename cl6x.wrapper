@@ -1,0 +1,99 @@
+#!/bin/bash
+
+# Usage: rename the cl6x application (`which cl6x`) to cl6x.orig and put
+#        this script to the original cl6x path.
+# Probably: ~/ti-processor-sdk-linux-rt-am57xx-evm-03.02.00.05/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/cl6x
+
+CL6X_PP="-ppa --preproc_macros"
+# CL6X_PP="-ppc -ppa"
+CL6X_RL="--gen_acp_raw --advice:performance"
+#  --opt_for_space=0
+
+CL6X_ALIASING="--no_bad_aliases"
+# or:  --aliased_variables
+
+CL6X_DEFINES="${MV_CPPFLAGS}"
+# -D__OPTIMIZE__=3
+
+
+if [[ "$MV460_BASE" == "" ]] ; then
+  echo "Warning: MV460_BASE is not set"
+  exit -1
+fi
+
+CL6X_INT_C_GENERATED=0
+
+# check which --openmp:xxx option is present
+echo "$@"|grep -w -q -e --openmp:host
+nothost=$?
+echo "$@"|grep -w -q -e --openmp:device
+notdevice=$?
+
+
+CL6X_MV_DEFS="$CL6X_DEFINES"
+
+if [[ "$1" == "--f" ]]; then
+  echo "-- cl6x linker stage --"
+else
+  CL6X_MV_DEFS="$CL6X_MV_DEFS -DOMPACC"
+fi
+
+if [[ $notdevice -eq 0 && $nothost -eq 0 ]]
+then
+	# this is unexpected
+	echo "--!! Contains both --openmp:host and --openmp:device, IMPOSSIBLE"
+	echo "--!! Args: $@"
+	exit -2
+elif [ $nothost -eq 0 ] ; then
+	# throw out 
+#	CL6X_CMD=$( echo "$0.orig $CL6X_RL $CL6X_ALIASING --opt_level=3 --verbose_diagnostics $CL6X_DEFINES -DOMPACC -DOMPACC_HOST $CL6X_PP $@" | sed -e 's/--openmp:host//g' -e 's/-DOMPACC_TARGET//' -e 's/ / --openmp:host /' )
+	echo "--[[ cl6x: host build proxy ]]-----------"
+  CL6X_MV_DEFS="$CL6X_MV_DEFS -DOMPACC_HOST"
+elif [ $notdevice -eq 0  ] ; then
+	# User-specified includes work in device build with cl6x, passing $CL6X_INC
+	# is not required:
+#	CL6X_CMD=$( echo "$0.orig $CL6X_RL $CL6X_ALIASING --opt_level=3 --verbose_diagnostics $CL6X_DEFINES -DOMPACC -DOMPACC_TARGET $CL6X_PP $@" |  sed -e 's/--openmp:device//g' -e 's/ / --openmp:device /' )
+	echo "--[[ cl6x: device build proxy ]]----------"
+  CL6X_MV_DEFS="$CL6X_MV_DEFS -DOMPACC_TARGET"
+	CL6X_INT_C_GENERATED=1
+else
+  #	CL6X_CMD="$0.orig  $CL6X_RL --opt_level=3 $CL6X_PP $CL6X_INC $@"
+	echo "--[[ cl6x: basic  build proxy ]]----------"
+fi
+
+# echo "          $CL6X_CMD" | sed 's/ -I/\\\n          -I/g'
+
+# eval $CL6X_CMD
+# rc=$?
+
+NARGS=$#
+NARGS=$((NARGS-1))
+CL6X_ARGS_HEAD=${@:1:$NARGS}
+CL6X_ARGS_TAIL=${@:$#}
+
+CL6X_PASSTHRU="cl6x.orig $CL6X_ARGS_HEAD $CL6X_MV_DEFS $CL6X_ARGS_TAIL"
+
+echo "--------------------------------------------------------------------"
+echo "$CL6X_PASSTHRU"
+echo "--------------------------------------------------------------------"
+
+eval $CL6X_PASSTHRU
+rc=$?
+
+
+exit $rc
+
+
+if [[ "$CL6X_INT_C_GENERATED" == "1" ]] ; then
+  echo "--!! Fixing spurious line breaks in intermediate code"
+  ORIGINAL_SRC_C_FILE_PATH=`echo ${CL6X_PASSTHRU} | grep -E '*\.c$' | awk '{print $NF}'`
+  INTERMEDIATE_C_FILE_PATH=`echo ${ORIGINAL_SRC_C_FILE_PATH} | sed 's/\.c/\.int\.c/' | xargs basename`
+  echo "--!! .c    ${ORIGINAL_SRC_C_FILE_PATH}"
+  echo "--!! int.c ${INTERMEDIATE_C_FILE_PATH}"
+
+  echo "sed --in-place='.orig' -z 's/\n\"/\"/g' ${INTERMEDIATE_C_FILE_PATH}"
+  echo "sed --in-place='.orig' -z 's/\"\n/\"/g' ${INTERMEDIATE_C_FILE_PATH}"
+  sed --in-place='.orig' -z 's/\n"/"/g' ${INTERMEDIATE_C_FILE_PATH}
+  sed --in-place='.orig' -z 's/"\n/"/g' ${INTERMEDIATE_C_FILE_PATH}
+fi
+
