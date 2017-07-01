@@ -50,9 +50,11 @@
 
 #pragma omp end declare target
 
-#ifndef MV_LOG__OAM__VSMEM
-#  undef  LOG_DEBUG
-#  define LOG_DEBUG(...) do { } while(0)
+#ifdef MV_LOG__OAM__VSMEM
+  #warning Excessive OMP memory management debug output enabled
+#else
+  #undef  LOG_DEBUG
+  #define LOG_DEBUG(...) do { } while(0)
 #endif
 
 void * oam_vsmem__set(
@@ -70,7 +72,11 @@ int oam_vsmem__freeMem(
   void                * pMem)
 {
   LOG_DEBUG("oam_vsmem__freeMem(%p)", pMem);
+#if defined(OMPACC)
   oam_vsmem__symmetric_free(pMem);
+#else
+  VSMEM_freeMem(pMem);
+#endif
   return 1;
 }
 
@@ -90,11 +96,14 @@ void * oam_vsmem__getMem(
   unsigned int          size,
   oam_vsmem__eMemTag    tag)
 {
+	void* pmem = 0;
 #if defined(OMPACC)
-  return oam_vsmem__getAlignedMem(segid, size, tag, 8, NULL);
+  pmem = oam_vsmem__getAlignedMem(segid, size, tag, 8, NULL);
 #else
-  return VSMEM_getMem(segid, size, tag);
+  pmem = VSMEM_getMem(segid, size, tag);
 #endif
+  LOG_DEBUG("oam_vsmem__getMem > (%p)", pmem);
+  return pmem;
 }
 
 void * oam_vsmem__getAlignedMem(
@@ -214,6 +223,7 @@ void * oam_vsmem__local_malloc(
 #else
   local_pmem = malloc(nbytes);
 #endif
+  LOG_DEBUG("oam_vsmem__local_malloc > (%p)", local_pmem);
   return local_pmem;
 }
 

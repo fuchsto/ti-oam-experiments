@@ -59,15 +59,15 @@ void sym_alloc_target(
 {
   #pragma omp target map(to: size_a, size_b)
   {
-    int   size  = 16; // size_a; // + size_b;
+    int   size  = size_a; // + size_b;
 
     if (size < sizeof(int)) { size = sizeof(int); }
 
     int   nelem = size / sizeof(int);
 
     int * buffer = oam_vsmem__symmetric_malloc(size);
-    printf("target: oam_vsmem__symmetric_malloc(%d) -> %p\n",
-           size, (void *)buffer);
+ // printf("target: oam_vsmem__symmetric_malloc(%d) -> %p\n",
+ //        size, (void *)buffer);
 
     int   i;
     for (i = 0; i < nelem; i++) {
@@ -76,8 +76,8 @@ void sym_alloc_target(
     for (i = 0; i < nelem; i++) {
       int expect = i + 1;
       if (buffer[i] != expect) {
-        printf("Test of buffer value at offset %d failed: got %d, "
-               "expected %d\n", i, (int)buffer[i], expect);
+ //     printf("Test of buffer value at offset %d failed: got %d, "
+ //            "expected %d\n", i, (int)buffer[i], expect);
         break;
       }
     }
