@@ -18,7 +18,7 @@
 #include <oam/oam_task.h>
 #include <oam/oam_comm.h>
 
-#include "native_lib_wrapper.h"
+#include "hybrid_wrapper.h"
 
 
 static void print_kernel_durations(
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
   std::future<int>    target_future;
 
   target_future = std::async(std::launch::async,
-                             native_lib_wrapper,
+                             hybrid_wrapper,
                                array_a,
                                array_b,
                                array_size,

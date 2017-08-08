@@ -1,0 +1,215 @@
+Options:
+  -b <buffer size> Bytes to allocate per repetition
+  -hr <num rep>    Number of repetitions at host
+  -tr <num rep>    Number of repetitions at target
+  -to <ms>         Timeout duration of target task in ms
+  -pi <ms>         Polling interval at target task in ms
+
+Running:
+  task_extlib.bin -b 1029400 -hr 100 -tr 100 -to 10000 -pi 300
+
+[ host ] DEBUG   [ 16697.781948 ] oam_vsmem.c                     :118   | oam_vsmem__symmetric_malloc(1029400) -> 0x0xa071b000
+
+[ host ] DEBUG   [ 16697.781991 ] oam_vsmem.c                     :118   | oam_vsmem__symmetric_malloc(1029400) -> 0x0xa0816580
+
+[ host ] DEBUG   [ 16697.816082 ] oam_vsmem.c                     :118   | oam_vsmem__symmetric_malloc(32) -> 0x0xa0911b00
+
+[ host ] [ [ 16697.816s ] >> decode(): devices: 1 default device: 0 initial device: yes
+16697.816s ]   0% completed
+	OCL Device 0 created
+Searching for [0xa0911b00:32] [0]
+DR:initMap [0xa0911b00:32] H<->T,tgt data
+	OCL Create B:0x9f2196e4 CMEM
+Searching for [0x9fbfeb88:4] [0]
+DR:initMap [0x9fbfeb88:4] mapptr,tgt data
+	OCL Create B:0x9f21bce4
+Searching for [0x9fbfeb18:4] [0]
+DR:initMap [0x9fbfeb18:4] H<-T,tgt data
+	OCL Create B:0x9f21bde4
+Searching for [0xa0816580:1029400] [0]
+DR:initMap [0xa0816580:1029400] H<-T,tgt data
+	OCL Create B:0x9f2624e4 CMEM
+Searching for [0x9fbfeb10:4] [0]
+DR:initMap [0x9fbfeb10:4] mapptr,tgt data
+	OCL Create B:0x9f2625c4
+Searching for [0x9fbfeb0c:4] [0]
+DR:initMap [0x9fbfeb0c:4] H->T,tgt data
+	OCL Create B:0x9f25a4d4
+Searching for [0xa071b000:1029400] [0]
+DR:initMap [0xa071b000:1029400] H->T,tgt data
+	OCL Create B:0x9f25a58c CMEM
+Searching for [0x9fbfeb14:4] [0]
+DR:initMap [0x9fbfeb14:4] mapptr,tgt data
+	OCL Create B:0x9f216484
+	OCL: wbInv on [0xa071b000:1029400] H->T,tgt data
+	OCL: wbInv on [0xa0816580:1029400] H<->T,tgt data
+	OCL: wbInv on [0xa0911b00:32] H<->T,tgt data
+RS: pushing [0x9f200468]
+[ 16697.867s ] >> oam_task__start
+Searching for [0xa0911b00:32] [1]
+DR: found in [0xa0911b00:32] H<->T,tgt data
+Searching for [0x9fbfeaa4:4] [1]
+DR:initMap [0x9fbfeaa4:4] mapptr,tgt data
+	OCL Create B:0x9f216744
+RS: pushing [0x9f25a658]
+Searching for [0xa0911b00:32] [2]
+	OCL Retain B:0x9f2196e4
+DR:updateMap [0xa0911b00:32] H->T,tgt data
+	OCL: wbInv on [0xa0911b00:32] H->T,tgt data
+	OCL Release B:0x9f2196e4
+Searching for [0x9fbfeaa4:4] [2]
+	OCL Retain B:0x9f216744
+DR:updateMap [0x9fbfeaa4:4] mapptr,tgt data
+	OCL Release B:0x9f216744
+RS: popping [0x9f25a658]
+	OCL Release B:0x9f216744
+[ 16697.867s ] >> oam_task__flush_signals
+[ 16697.867s ] << target data section: step 1
+TR:initMap [0x9fbfea78:4] H<->T,tgt
+Searching for [0x9fbfea78:4] [1]
+	OCL Create B:0x9f216744
+TR:initMap [0xa0911b00:32] H<->T,tgt
+Searching for [0xa0911b00:32] [1]
+TR: found [0xa0911b00:32] H<->T,tgt data for [0xa0911b00:32]
+	OCL Retain B:0x9f2196e4
+TR:initMap [0x9fbfeaf8:4] mapptr,tgt
+Searching for [0x9fbfeaf8:4] [1]
+	OCL Create B:0x9f216a6c
+TR:initMap [0x9fbfea8c:4] H<-T,tgt
+Searching for [0x9fbfea8c:4] [1]
+	OCL Create B:0x9f2174a4
+TR:initMap [0xa0816580:1029400] H<-T,tgt
+Searching for [0xa0816580:1029400] [1]
+TR: found [0xa0816580:1029400] H<->T,tgt data for [0xa0816580:1029400]
+	OCL Retain B:0x9f2624e4
+TR:initMap [0x9fbfea80:4] mapptr,tgt
+Searching for [0x9fbfea80:4] [1]
+	OCL Create B:0x9f2177ac
+TR:initMap [0x9fbfea7c:4] H->T,tgt
+Searching for [0x9fbfea7c:4] [1]
+	OCL Create B:0x9f2178ac
+TR:initMap [0xa071b000:1029400] H->T,tgt
+Searching for [0xa071b000:1029400] [1]
+TR: found [0xa071b000:1029400] H->T,tgt data for [0xa071b000:1029400]
+	OCL Retain B:0x9f25a58c
+TR:initMap [0x9fbfea84:4] mapptr,tgt
+Searching for [0x9fbfea84:4] [1]
+	OCL Create B:0x9f217dec
+	OclDevice::Initialize kernel
+  Arg[0]: 0x9f216744
+  Arg[1]: 0x9f2196e4
+  Arg[2]: 0x9f216a6c
+  Arg[3]: bias 0
+  Arg[4]: 0x9f2174a4
+  Arg[5]: 0x9f2624e4
+  Arg[6]: 0x9f2177ac
+  Arg[7]: bias 0
+  Arg[8]: 0x9f2178ac
+  Arg[9]: 0x9f25a58c
+  Arg[10]: 0x9f217dec
+  Arg[11]: bias 0
+	TargetRegion::Host -> Target
+	OclDevice::Execute kernel
+	OclDevice::Execute kernel waiting...
+[core 0] [ 0.001s ] >> decoder_body: 16697.867 max.ms: 10 -> time limit: 16707.867 repeats: 100
+[core 0] [ 0.001s ] >> decoder_body: processor cores: 2 max. number of OpenMP threads: 2
+[core 1] [ 0.001s ] ++ decoder_body: 514701 / 1029399, acc:0, param:0
+[core 0] [ 0.001s ] ++ decoder_body: 0 / 1029399, acc:0, param:0
+[ host ] [ 16698.010s ]  10% completed
+[ host ] [ 16698.226s ]  20% completed
+[ host ] [ 16698.444s ]  30% completed
+[ host ] [ 16698.688s ]  40% completed
+[core 1] [ 0.896s ] ++ decoder_body: 617641 / 1029399, acc:2, param:0
+[core 0] [ 0.898s ] ++ decoder_body: 102940 / 1029399, acc:3, param:0
+[ host ] [ 16698.931s ]  50% completed
+[ host ] [ 16699.177s ]  60% completed
+[ host ] [ 16699.429s ]  70% completed
+[core 1] [ 1.791s ] ++ decoder_body: 720581 / 1029399, acc:4, param:0
+[core 0] [ 1.795s ] ++ decoder_body: 205880 / 1029399, acc:5, param:0
+[ host ] [ 16699.690s ]  80% completed
+[ host ] [ 16699.950s ]  90% completed
+[ host ] -- [ 16700.208s ] Setting param to 555
+Searching for [0xa0911b00:32] [1]
+DR: found in [0xa0911b00:32] H<->T,tgt data
+Searching for [0xbebcda14:4] [1]
+DR:initMap [0xbebcda14:4] mapptr,tgt data
+	OCL Create B:0x6d63c
+RS: pushing [0x6d5e8]
+Searching for [0xa0911b00:32] [2]
+	OCL Retain B:0x9f2196e4
+DR:updateMap [0xa0911b00:32] H->T,tgt data
+	OCL: wbInv on [0xa0911b00:32] H->T,tgt data
+	OCL Release B:0x9f2196e4
+Searching for [0xbebcda14:4] [2]
+	OCL Retain B:0x6d63c
+DR:updateMap [0xbebcda14:4] mapptr,tgt data
+	OCL Release B:0x6d63c
+[core 1] [ 2.686s ] ++ decoder_body: 823521 / 1029399, acc:6, param:555
+[core 0] [ 2.691s ] ++ decoder_body: 308820 / 1029399, acc:7, param:555
+[core 1] [ 3.580s ] ++ decoder_body: 926461 / 1029399, acc:8, param:555
+[core 0] [ 3.588s ] ++ decoder_body: 411760 / 1029399, acc:9, param:555
+[core 0] [ 4.485s ] << target section: leaving, acc:10, param:555
+	OclDevice::Release kernel events
+	OclDevice::Execute kernel complete
+	TargetRegion::Target -> Host
+	OCL Release B:0x9f216744
+	OCL Release B:0x9f2196e4
+	OCL Release B:0x9f216a6c
+	OCL Release B:0x9f2174a4
+	OCL Release B:0x9f2624e4
+	OCL Release B:0x9f2177ac
+	OCL Release B:0x9f2178ac
+	OCL Release B:0x9f25a58c
+	OCL Release B:0x9f217dec
+Searching for [0xa0911b00:32] [2]
+DR: found in [0xa0911b00:32] H<->T,tgt data
+Searching for [0x9fbfea94:4] [2]
+DR:initMap [0x9fbfea94:4] mapptr,tgt data
+	OCL Create B:0x9f218b34
+RS: pushing [0x9f217fe0]
+Searching for [0xa0911b00:32] [3]
+	OCL Retain B:0x9f2196e4
+DR:updateMap [0xa0911b00:32] H->T,tgt data
+	OCL: wbInv on [0xa0911b00:32] H->T,tgt data
+	OCL Release B:0x9f2196e4
+Searching for [0x9fbfea94:4] [3]
+	OCL Retain B:0x9f218b34
+DR:updateMap [0x9fbfea94:4] mapptr,tgt data
+	OCL Release B:0x9f218b34
+RS: popping [0x9f217fe0]
+	OCL Release B:0x9f218b34
+[ 16702.363s ] >> oam_task__flush_signals
+[ 16702.363s ] << target data section: leaving, acc:10, param:555
+RS: popping [0x6d5e8]
+	OCL Release B:0x6d63c
+RS: popping [0x9f200468]
+	OCL Release B:0x9f25a4d4
+	OCL Release B:0x9f2625c4
+	OCL Release B:0x9f216484
+	OCL Release B:0x9f21bde4
+	OCL Release B:0x9f21bce4
+	OCL Release B:0x9f25a58c
+	OCL Release B:0x9f2624e4
+	OCL Release B:0x9f2196e4
+[ 16702.364s ] >> oam_task__flush_signals
+[ host ] [ 16702.364s ]   0% completed
+[ host ] [ 16702.549s ]  10% completed
+[ host ] [ 16702.766s ]  20% completed
+[ host ] [ 16702.985s ]  30% completed
+[ host ] [ 16703.222s ]  40% completed
+[ host ] [ 16703.465s ]  50% completed
+[ host ] [ 16703.714s ]  60% completed
+[ host ] [ 16703.965s ]  70% completed
+[ host ] [ 16704.222s ]  80% completed
+[ host ] [ 16704.479s ]  90% completed
+[ host ] -- [ 16704.740s ] Setting param to 999
+[ host ] -- [ 16704.740s ] Completed target task
+[ host ] -- Task exit code:        (2):TIMEOUT
+
+[ host ] -- The irrelevant result: 10
+[ host ] DEBUG   [ 16704.739885 ] oam_vsmem.c                     :125   | oam_vsmem__free(0x0xa0911b00)
+
+[ host ] DEBUG   [ 16704.739923 ] oam_vsmem.c                     :125   | oam_vsmem__free(0x0xa071b000)
+
+[ host ] DEBUG   [ 16704.739941 ] oam_vsmem.c                     :125   | oam_vsmem__free(0x0xa0816580)
+

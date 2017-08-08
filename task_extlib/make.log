@@ -1,0 +1,67 @@
+arm-linux-gnueabihf-g++  -march=armv7-a -marm -mfpu=neon  -mfloat-abi=hard --sysroot=/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/armv7ahf-neon-linux-gnueabi  -march=armv7-a -marm -mfpu=neon  -mfloat-abi=hard --sysroot=/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/armv7ahf-neon-linux-gnueabi -DDEBUG -DENABLE_LOGGING -mtune=cortex-a15 -mfloat-abi=hard -mfpu=vfp -std=c++11  -c  -march=armv7-a -marm -mfpu=neon  -mfloat-abi=hard --sysroot=/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/armv7ahf-neon-linux-gnueabi -DDEBUG -DENABLE_LOGGING -mtune=cortex-a15 -mfloat-abi=hard -mfpu=vfp -std=c++11 -I/home/fuchsto/workspaces/ti-oam-experiments/task_extlib/include  -I../base/_inc -c task_extlib_main.cpp
+make -C decoder/
+make[1]: Entering directory '/home/fuchsto/workspaces/ti-oam-experiments/task_extlib/decoder'
+clacc --show_cc_opts -v -k -d -p -g --hc="-I/home/fuchsto/workspaces/ti-oam-experiments/task_extlib/include -I../../base/_inc -DDEBUG -DENABLE_LOGGING -march=armv7-a -mtune=cortex-a15 -mfloat-abi=hard -mfpu=neon -Wall -Wextra -fopenmp" --tc="-I/home/fuchsto/workspaces/ti-oam-experiments/task_extlib/include -I../../base/_inc -DDEBUG -DENABLE_LOGGING" --hl="-lm" --tl="-lm" --make_lib decoder_target.c -o libdecoder_target.a liboam.a
+>> DEBUG: Extra host compiler options: -I/home/fuchsto/workspaces/ti-oam-experiments/task_extlib/include -I../../base/_inc -DDEBUG -DENABLE_LOGGING -march=armv7-a -mtune=cortex-a15 -mfloat-abi=hard -mfpu=neon -Wall -Wextra -fopenmp
+>> DEBUG: Extra target compiler options: -I/home/fuchsto/workspaces/ti-oam-experiments/task_extlib/include -I../../base/_inc -DDEBUG -DENABLE_LOGGING
+>> DEBUG: Extra Host linker options: -lm
+>> DEBUG: Extra Target linker options: -lm
+>> Host CC: arm-linux-gnueabihf-gcc -I/home/fuchsto/workspaces/ti-oam-experiments/task_extlib/include -I../../base/_inc -DDEBUG -DENABLE_LOGGING -march=armv7-a -mtune=cortex-a15 -mfloat-abi=hard -mfpu=neon -Wall -Wextra -fopenmp
+>> Target CC: cl6x --openmp:device -mv6600 -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/cgt-c6x/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/openmpacc/dsp/include -I/home/fuchsto/workspaces/ti-oam-experiments/task_extlib/include -I../../base/_inc -DDEBUG -DENABLE_LOGGING 
+>> S2S: cl6x --preinclude=/tmp/gcc_predefehYFzG --openmp:host -pds=1173 -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/include -I/home/fuchsto/workspaces/ti-oam-experiments/task_extlib/include -I../../base/_inc -DDEBUG -DENABLE_LOGGING -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include-fixed -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/../../../../arm-linux-gnueabihf/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../arm-linux-gnueabihf/libc/usr/include 
+>> DEBUG: Library name: libdecoder_target.a
+>> DEBUG: Input files: decoder_target.c liboam.a 
+>> DEBUG: Source code file: decoder_target.c
+>> DEBUG: CLACC library archive: liboam.a
+>> DEBUG: Using /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/arm-linux-gnueabihf-gcc for HOST compilation.
+>> DEBUG: Using /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/arm-linux-gnueabihf-g++ for HOST compilation.
+>> DEBUG: Using /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/cl6x for TARGET compilation.
+>> DEBUG: Using /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/cl6x for S2S compilation.
+>> DEBUG: Using /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/clocl for TARGET compilation.
+cl6x --preinclude=/tmp/gcc_predefehYFzG --openmp:host -pds=1173 -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/include -I/home/fuchsto/workspaces/ti-oam-experiments/task_extlib/include -I../../base/_inc -DDEBUG -DENABLE_LOGGING -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include-fixed -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/../../../../arm-linux-gnueabihf/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../arm-linux-gnueabihf/libc/usr/include decoder_target.c 
+--[[ cl6x: host build proxy ]]-----------
+--------------------------------------------------------------------
+cl6x.orig --preinclude=/tmp/gcc_predefehYFzG --openmp:host -pds=1173 -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/include -I/home/fuchsto/workspaces/ti-oam-experiments/task_extlib/include -I../../base/_inc -DDEBUG -DENABLE_LOGGING -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include-fixed -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/../../../../arm-linux-gnueabihf/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../arm-linux-gnueabihf/libc/usr/include -DEXCLUDE_OCR -DNO_ANNOTATION -DMV440 -DOMPACC -DOMPACC_HOST decoder_target.c
+--------------------------------------------------------------------
+cl6x --openmp:device -mv6600 -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/cgt-c6x/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/openmpacc/dsp/include -I/home/fuchsto/workspaces/ti-oam-experiments/task_extlib/include -I../../base/_inc -DDEBUG -DENABLE_LOGGING decoder_target.c 
+--[[ cl6x: device build proxy ]]----------
+--------------------------------------------------------------------
+cl6x.orig --openmp:device -mv6600 -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/cgt-c6x/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/openmpacc/dsp/include -I/home/fuchsto/workspaces/ti-oam-experiments/task_extlib/include -I../../base/_inc -DDEBUG -DENABLE_LOGGING -DEXCLUDE_OCR -DNO_ANNOTATION -DMV440 -DOMPACC -DOMPACC_TARGET decoder_target.c
+--------------------------------------------------------------------
+arm-linux-gnueabihf-gcc -I/home/fuchsto/workspaces/ti-oam-experiments/task_extlib/include -I../../base/_inc -DDEBUG -DENABLE_LOGGING -march=armv7-a -mtune=cortex-a15 -mfloat-abi=hard -mfpu=neon -Wall -Wextra -fopenmp -c decoder_target.int.c 
+ar rcs libdecoder_target.a libdecoder_target.cl decoder_target.int.o decoder_target.obj 
+>> DEBUG: CLACC library libdecoder_target.a created successfully.
+make[1]: Leaving directory '/home/fuchsto/workspaces/ti-oam-experiments/task_extlib/decoder'
+make -C ../base
+make[1]: Entering directory '/home/fuchsto/workspaces/ti-oam-experiments/base'
+make[1]: Leaving directory '/home/fuchsto/workspaces/ti-oam-experiments/base'
+clacc --show_cc_opts -v -k -d -p -g --hc="-I/home/fuchsto/workspaces/ti-oam-experiments/task_extlib/include  -I../base/_inc -DDEBUG -DENABLE_LOGGING -mtune=cortex-a15 -mfloat-abi=hard -mfpu=vfp -Wall -Wextra -fopenmp" --tc="-I/home/fuchsto/workspaces/ti-oam-experiments/task_extlib/include  -I../base/_inc -DDEBUG -DENABLE_LOGGING" --hl="-L. -L../base/_lib -l:liboam.a" --tl="-L. -L../base/_lib -l:liboam.a"  task_extlib_main.o libdecoder_target.a liboam.a -o task_extlib.bin
+>> DEBUG: Extra host compiler options: -I/home/fuchsto/workspaces/ti-oam-experiments/task_extlib/include  -I../base/_inc -DDEBUG -DENABLE_LOGGING -mtune=cortex-a15 -mfloat-abi=hard -mfpu=vfp -Wall -Wextra -fopenmp
+>> DEBUG: Extra target compiler options: -I/home/fuchsto/workspaces/ti-oam-experiments/task_extlib/include  -I../base/_inc -DDEBUG -DENABLE_LOGGING
+>> DEBUG: Extra Host linker options: -L. -L../base/_lib -l:liboam.a
+>> DEBUG: Extra Target linker options: -L. -L../base/_lib -l:liboam.a
+>> Host CC: arm-linux-gnueabihf-gcc -I/home/fuchsto/workspaces/ti-oam-experiments/task_extlib/include  -I../base/_inc -DDEBUG -DENABLE_LOGGING -mtune=cortex-a15 -mfloat-abi=hard -mfpu=vfp -Wall -Wextra -fopenmp
+>> Target CC: cl6x --openmp:device -mv6600 -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/cgt-c6x/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/openmpacc/dsp/include -I/home/fuchsto/workspaces/ti-oam-experiments/task_extlib/include  -I../base/_inc -DDEBUG -DENABLE_LOGGING 
+>> S2S: cl6x --preinclude=/tmp/gcc_predefrxVgfd --openmp:host -pds=1173 -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/include -I/home/fuchsto/workspaces/ti-oam-experiments/task_extlib/include  -I../base/_inc -DDEBUG -DENABLE_LOGGING -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include-fixed -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/../../../../arm-linux-gnueabihf/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../arm-linux-gnueabihf/libc/usr/include 
+>> DEBUG: Executable binary name: task_extlib.bin
+>> DEBUG: Input files: task_extlib_main.o libdecoder_target.a liboam.a 
+>> DEBUG: ARM object file or archive: task_extlib_main.o
+>> DEBUG: CLACC library archive: libdecoder_target.a
+>> DEBUG: CLACC library archive: liboam.a
+>> DEBUG: Using /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/arm-linux-gnueabihf-gcc for HOST compilation.
+>> DEBUG: Using /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/arm-linux-gnueabihf-g++ for HOST compilation.
+>> DEBUG: Using /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/cl6x for TARGET compilation.
+>> DEBUG: Using /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/cl6x for S2S compilation.
+>> DEBUG: Using /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/clocl for TARGET compilation.
+clocl -t -v -g __TI_CLACC_KERNEL.cl /tmp/libdecoder_target04f04e1897/decoder_target.obj /tmp/liboama30635b1d2/oam_vsmem.obj /tmp/liboama30635b1d2/oam_comm.obj /tmp/liboama30635b1d2/oam_task_target.obj 
+-- cl6x linker stage --
+--[[ cl6x: basic  build proxy ]]----------
+--------------------------------------------------------------------
+cl6x.orig --f -q --abi=eabi --use_g3 -mv6600 -mo -mt -o0 -g -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/cgt-c6x/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/cgt-c6x/lib -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/opencl --bc_file=__TI_CLACC_KERNEL.bc __TI_CLACC_KERNEL_bc.asm -z -o __TI_CLACC_KERNEL.out /tmp/libdecoder_target04f04e1897/decoder_target.obj /tmp/liboama30635b1d2/oam_vsmem.obj /tmp/liboama30635b1d2/oam_comm.obj /tmp/liboama30635b1d2/oam_task_target.obj -DEXCLUDE_OCR -DNO_ANNOTATION -DMV440 -ldsp.syms
+--------------------------------------------------------------------
+>> WARNING: invalid linker option -DEXCLUDE_OCR (ignored)
+>> WARNING: invalid linker option -DNO_ANNOTATION (ignored)
+>> WARNING: invalid linker option -DMV440 (ignored)
+arm-linux-gnueabihf-g++ -I/home/fuchsto/workspaces/ti-oam-experiments/task_extlib/include  -I../base/_inc -DDEBUG -DENABLE_LOGGING -mtune=cortex-a15 -mfloat-abi=hard -mfpu=vfp -Wall -Wextra -fopenmp -c __TI_CLACC_KERNEL.c 
+arm-linux-gnueabihf-g++ -I/home/fuchsto/workspaces/ti-oam-experiments/task_extlib/include  -I../base/_inc -DDEBUG -DENABLE_LOGGING -mtune=cortex-a15 -mfloat-abi=hard -mfpu=vfp -Wall -Wextra -fopenmp task_extlib_main.o __TI_CLACC_KERNEL.o /tmp/libdecoder_target04f04e1897/decoder_target.int.o /tmp/liboama30635b1d2/oam_comm.int.o /tmp/liboama30635b1d2/oam_vsmem.int.o /tmp/liboama30635b1d2/oam_task_target.int.o /tmp/liboama30635b1d2/oam_task.o -L. -L../base/_lib -l:liboam.a --sysroot=/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS -lOpenMPAcc -lOpenCL -locl_util -o task_extlib.bin
+>> DEBUG: Executable binary task_extlib.bin created successfully.

@@ -7,9 +7,9 @@
 extern "C" {
 #endif
 
-int native_lib_wrapper(
-    double      * array_a,
-    double      * array_b,
+int hybrid_wrapper(
+    char        * array_a,
+    char        * array_b,
     int           nelem,
     int           nrepeat,
     HostMessage * signals);

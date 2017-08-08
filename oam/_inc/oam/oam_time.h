@@ -6,10 +6,16 @@
 #  include <time.h>
 #  include <sched.h>
 #  include <sys/time.h>
+#else
+#pragma omp declare target
+#  include <omp.h>
+#  if defined(OMPACC_TARGET)
+#    include "ti_omp_device.h"
+#  endif
+#pragma omp end declare target
 #endif
 
 #include <oam/oam_types.h>
-#include <omp.h>
 
 #pragma omp declare target
 typedef double ts_t;
