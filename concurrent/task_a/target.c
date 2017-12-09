@@ -4,7 +4,6 @@
 
 #include <oam/macro.h>
 #include <oam/logging.h>
-
 #include <oam/oam_config.h>
 #include <oam/oam_types.h>
 #include <oam/oam_task_target.h>

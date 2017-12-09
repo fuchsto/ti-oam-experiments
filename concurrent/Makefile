@@ -46,10 +46,10 @@ TASK_B_OAM_LIB  = task_b.a
 TASK_LIBS       = $(TASK_A_OAM_LIB) $(TASK_B_OAM_LIB)
 
 EXE							= concurrent.bin
+
 HOST_CODE				= concurrent_main.cpp
+TARGET_CODE			=
 
-
-TARGET_CODE			= concurrent_target.c
 OBJS						= $(patsubst %.cpp, %.o, $(HOST_CODE))
 
 all: $(EXE)
@@ -68,8 +68,8 @@ $(TASK_A_OAM_LIB):
 	@cp ./task_a/*.a .
 
 $(TASK_B_OAM_LIB):
-	$(MAKE) -C ./task_a
-	@cp ./task_a/*.a .
+	$(MAKE) -C ./task_b
+	@cp ./task_b/*.a .
 
 $(BASE_OAM_LIB):
 	$(MAKE) -C ../oam/tioamlinux.oam

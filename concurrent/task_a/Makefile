@@ -42,6 +42,8 @@ OA_SHELL_OPTS   = $(OA_SHELL_FLAGS) \
 									--hl="$(OA_HL_OPTS)" \
 									--tl="$(OA_TL_OPTS)"
 
+OA_SHELL_LIB_OPTS = $(OA_SHELL_OPTS) --make_lib
+
 BASE_OAM_LIB		= liboam.a
 
 LIB							= task_a.a
@@ -68,7 +70,7 @@ $(BASE_OAM_LIB):
 	@echo "=="
 	@echo "== task_a        == COMPILE.c:       C object: ${@}"
 	@echo "=="
-	$(COMPILE.c) $< -o $@
+	$(COMPILE.c) $(CFLAGS) $< -o $@
 
 %.o: %.cpp
 	@echo "=="
