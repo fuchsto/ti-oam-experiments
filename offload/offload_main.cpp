@@ -123,6 +123,16 @@ int main(int argc, char *argv[])
       sym_alloc_target(sym_heap_a_size, sym_heap_b_size);
     }
     oam_sym_alloc_durations.push_back(oam_elapsed_since(target_start));
+
+    if (i > 0) continue;
+
+    std::cout << "First 10 values in output:\n";
+    for (int v = 0; v < 10; v++) {
+      std::cout << static_cast<int>(
+                     *(symmetric_heap_a + buffer_size_a + v) )
+                << " ";
+    }
+    std::cout << std::endl;
   }
 
   /* ---------------------------------------------------------------------- *

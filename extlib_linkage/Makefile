@@ -48,15 +48,13 @@ HOST_OBJS				= $(patsubst %.cpp, %.o, $(HOST_CODE))
 
 BASE_OAM_LIB		= liboam.a
 
-LIBEXT_HOST			= libdecoder_host.a
-
-DECODER_LIB			= $(LIBEXT_HOST)
+DECODER_LIB			= libdecoder.a
 
 all: $(EXE)
 
-$(LIBEXT_HOST):
+$(DECODER_LIB):
 	$(MAKE) -C decoder/
-	@cp decoder/libdecoder_host.a .
+	@cp decoder/$(DECODER_LIB) .
 
 $(BASE_OAM_LIB):
 	$(MAKE) -C ../base
@@ -87,7 +85,7 @@ deploy: $(EXE)
 clean:
 	$(MAKE) -C ../base clean
 	$(MAKE) -C decoder/ clean
-	@rm -f $(EXE) $(OA_SHELL_TMP_FILES) *.log *.a
+	@rm -f $(EXE) $(OA_SHELL_TMP_FILES) *.a *.pp *.rl ext/*.o ext/*.pp ext/*.rl
 
 help:
 	@echo "options:			verbose=1					 verbose build log messages"

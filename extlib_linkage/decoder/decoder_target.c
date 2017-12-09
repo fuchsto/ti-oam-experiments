@@ -120,14 +120,14 @@ int decoder_body(
     int i;
     int r;
     double ts_start = omp_get_wtime();
-    double limit_ms = (double)(host_signals->timeout_after_ms);
-    double time_max = (host_signals->time_start_ms + limit_ms) * 1.0e-3;
+    double limit_us = (double)(host_signals->timeout_after_us);
+    double time_max = (host_signals->time_start_us + limit_us) * 1.0e-6;
     acc = 0;
 
     printf("[ %.3fs ] >> decoder_body: %.3f max.ms: %d "
            "-> time limit: %.3f repeats: %d\n",
-           ts_start, host_signals->time_start_ms * 1.0e-3,
-           host_signals->timeout_after_ms,
+           ts_start, host_signals->time_start_us * 1.0e-6,
+           host_signals->timeout_after_us,
            time_max, repeats);
 
     int aborted;

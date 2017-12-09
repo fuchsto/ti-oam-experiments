@@ -49,7 +49,7 @@ HOST_OBJS							= $(patsubst %.c, %.o, $(HOST_CODE))
 
 BASE_OAM_LIB					= liboam.a
 
-HOST_LIB							= libdecoder_host.a
+HOST_LIB							= libdecoder.a
 LIBS									= $(HOST_LIB)
 
 all: $(LIBS)
@@ -79,5 +79,5 @@ $(HOST_LIB): $(TARGET_CODE) $(HOST_OBJS) $(BASE_OAM_LIB)
 
 clean:
 	$(MAKE) -C ../../base clean
-	@rm -f $(LIBS) $(BASE_OAM_LIB) $(OA_SHELL_TMP_FILES) *.log
+	@rm -f $(LIBS) $(BASE_OAM_LIB) $(OA_SHELL_TMP_FILES) *.log *.a *.rl *.pp *.orig
 

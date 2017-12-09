@@ -1,0 +1,256 @@
+==
+== comm_async    == COMPILE.cpp:     CPP object: offload_main.o
+==
+arm-linux-gnueabihf-g++  -march=armv7-a -marm -mfpu=neon  -mfloat-abi=hard --sysroot=/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/armv7ahf-neon-linux-gnueabi  -march=armv7-a -marm -mfpu=neon  -mfloat-abi=hard --sysroot=/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/armv7ahf-neon-linux-gnueabi -I/home/fuchsto/workspaces/ti-oam-experiments/offload/include -I../oam/_inc -DNDEBUG -DOMPACC  -c -std=c++11 offload_main.cpp -o offload_main.o
+make -C ../oam/tioamlinux.oam
+make[1]: Entering directory '/home/fuchsto/workspaces/ti-oam-experiments/oam/tioamlinux.oam'
+==
+== liboam        == COMPILE.c:       C object: build/oam_task.o
+==
+arm-linux-gnueabihf-gcc  -march=armv7-a -marm -mfpu=neon  -mfloat-abi=hard --sysroot=/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/armv7ahf-neon-linux-gnueabi -I/home/fuchsto/workspaces/ti-oam-experiments/offload/include -I../oam/_inc -DNDEBUG -I./_inc -I../_inc -I../vs130/_inc -I../../vs130/_inc -I../sysdefs/_inc -I../../sysdefs/_inc -I../basefw/_inc -I../../basefw/_inc -DNDEBUG  -march=armv7-a -marm -mfpu=neon  -mfloat-abi=hard --sysroot=/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/armv7ahf-neon-linux-gnueabi -I/home/fuchsto/workspaces/ti-oam-experiments/offload/include -I../oam/_inc -DNDEBUG -DOMPACC -I./_inc -I../_inc -I../vs130/_inc -I../../vs130/_inc -I../sysdefs/_inc -I../../sysdefs/_inc -I../basefw/_inc -I../../basefw/_inc -DNDEBUG  -c ../_src/oam_task.c -o build/oam_task.o
+==
+== liboam        == OA_SHELL:        LIB: liboam.a
+==
+clacc --show_cc_opts -v -k  --hc="-I./_inc -I../_inc -I../vs130/_inc -I../../vs130/_inc -I../sysdefs/_inc -I../../sysdefs/_inc -I../basefw/_inc -I../../basefw/_inc -DNDEBUG -DOMPACC  -Wall -Wextra -Wno-empty-body -Wno-unused-parameter -fopenmp" --tc="-I./_inc -I../_inc -I../vs130/_inc -I../../vs130/_inc -I../sysdefs/_inc -I../../sysdefs/_inc -I../basefw/_inc -I../../basefw/_inc -DNDEBUG -DOMPACC" --hl="-lm -lrt" --tl="-lm -lrt" --make_lib  build/oam_task.o ../_src/oam_comm.c ../_src/oam_vsmem.c ../_src/oam_task_target.c -o liboam.a
+>> DEBUG: Extra host compiler options: -I./_inc -I../_inc -I../vs130/_inc -I../../vs130/_inc -I../sysdefs/_inc -I../../sysdefs/_inc -I../basefw/_inc -I../../basefw/_inc -DNDEBUG -DOMPACC  -Wall -Wextra -Wno-empty-body -Wno-unused-parameter -fopenmp
+>> DEBUG: Extra target compiler options: -I./_inc -I../_inc -I../vs130/_inc -I../../vs130/_inc -I../sysdefs/_inc -I../../sysdefs/_inc -I../basefw/_inc -I../../basefw/_inc -DNDEBUG -DOMPACC
+>> DEBUG: Extra Host linker options: -lm -lrt
+>> DEBUG: Extra Target linker options: -lm -lrt
+>> Host CC: arm-linux-gnueabihf-gcc -I./_inc -I../_inc -I../vs130/_inc -I../../vs130/_inc -I../sysdefs/_inc -I../../sysdefs/_inc -I../basefw/_inc -I../../basefw/_inc -DNDEBUG -DOMPACC  -Wall -Wextra -Wno-empty-body -Wno-unused-parameter -fopenmp
+>> Target CC: cl6x --openmp:device -mv6600 -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/cgt-c6x/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/openmpacc/dsp/include -I./_inc -I../_inc -I../vs130/_inc -I../../vs130/_inc -I../sysdefs/_inc -I../../sysdefs/_inc -I../basefw/_inc -I../../basefw/_inc -DNDEBUG -DOMPACC 
+>> S2S: cl6x --preinclude=/tmp/gcc_predef9rV3yw --openmp:host -pds=1173 -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/include -I./_inc -I../_inc -I../vs130/_inc -I../../vs130/_inc -I../sysdefs/_inc -I../../sysdefs/_inc -I../basefw/_inc -I../../basefw/_inc -DNDEBUG -DOMPACC -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include-fixed -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/../../../../arm-linux-gnueabihf/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../arm-linux-gnueabihf/libc/usr/include 
+>> DEBUG: Library name: liboam.a
+>> DEBUG: Input files: build/oam_task.o ../_src/oam_comm.c ../_src/oam_vsmem.c ../_src/oam_task_target.c 
+>> DEBUG: ARM object file or archive: build/oam_task.o
+>> DEBUG: Source code file: ../_src/oam_comm.c
+>> DEBUG: Source code file: ../_src/oam_vsmem.c
+>> DEBUG: Source code file: ../_src/oam_task_target.c
+>> DEBUG: Using /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/arm-linux-gnueabihf-gcc for HOST compilation.
+>> DEBUG: Using /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/arm-linux-gnueabihf-g++ for HOST compilation.
+>> DEBUG: Using /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/cl6x for TARGET compilation.
+>> DEBUG: Using /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/cl6x for S2S compilation.
+>> DEBUG: Using /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/clocl for TARGET compilation.
+cl6x --preinclude=/tmp/gcc_predef9rV3yw --openmp:host -pds=1173 -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/include -I./_inc -I../_inc -I../vs130/_inc -I../../vs130/_inc -I../sysdefs/_inc -I../../sysdefs/_inc -I../basefw/_inc -I../../basefw/_inc -DNDEBUG -DOMPACC -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include-fixed -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/../../../../arm-linux-gnueabihf/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../arm-linux-gnueabihf/libc/usr/include ../_src/oam_comm.c 
+--[[ cl6x: host build proxy ]]-----------
+          /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/cl6x.orig --openmp:host --gen_acp_raw --advice:performance --no_bad_aliases --opt_level=3 --verbose_diagnostics  -DOMPACC -DOMPACC_HOST -ppa --preproc_macros --preinclude=/tmp/gcc_predef9rV3yw  -pds=1173\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/include\
+          -I./_inc\
+          -I../_inc\
+          -I../vs130/_inc\
+          -I../../vs130/_inc\
+          -I../sysdefs/_inc\
+          -I../../sysdefs/_inc\
+          -I../basefw/_inc\
+          -I../../basefw/_inc -DNDEBUG -DOMPACC\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include-fixed\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/../../../../arm-linux-gnueabihf/include\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../arm-linux-gnueabihf/libc/usr/include ../_src/oam_comm.c
+cl6x --preinclude=/tmp/gcc_predef9rV3yw --openmp:host -pds=1173 -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/include -I./_inc -I../_inc -I../vs130/_inc -I../../vs130/_inc -I../sysdefs/_inc -I../../sysdefs/_inc -I../basefw/_inc -I../../basefw/_inc -DNDEBUG -DOMPACC -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include-fixed -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/../../../../arm-linux-gnueabihf/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../arm-linux-gnueabihf/libc/usr/include ../_src/oam_vsmem.c 
+--[[ cl6x: host build proxy ]]-----------
+          /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/cl6x.orig --openmp:host --gen_acp_raw --advice:performance --no_bad_aliases --opt_level=3 --verbose_diagnostics  -DOMPACC -DOMPACC_HOST -ppa --preproc_macros --preinclude=/tmp/gcc_predef9rV3yw  -pds=1173\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/include\
+          -I./_inc\
+          -I../_inc\
+          -I../vs130/_inc\
+          -I../../vs130/_inc\
+          -I../sysdefs/_inc\
+          -I../../sysdefs/_inc\
+          -I../basefw/_inc\
+          -I../../basefw/_inc -DNDEBUG -DOMPACC\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include-fixed\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/../../../../arm-linux-gnueabihf/include\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../arm-linux-gnueabihf/libc/usr/include ../_src/oam_vsmem.c
+cl6x --preinclude=/tmp/gcc_predef9rV3yw --openmp:host -pds=1173 -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/include -I./_inc -I../_inc -I../vs130/_inc -I../../vs130/_inc -I../sysdefs/_inc -I../../sysdefs/_inc -I../basefw/_inc -I../../basefw/_inc -DNDEBUG -DOMPACC -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include-fixed -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/../../../../arm-linux-gnueabihf/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../arm-linux-gnueabihf/libc/usr/include ../_src/oam_task_target.c 
+--[[ cl6x: host build proxy ]]-----------
+          /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/cl6x.orig --openmp:host --gen_acp_raw --advice:performance --no_bad_aliases --opt_level=3 --verbose_diagnostics  -DOMPACC -DOMPACC_HOST -ppa --preproc_macros --preinclude=/tmp/gcc_predef9rV3yw  -pds=1173\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/include\
+          -I./_inc\
+          -I../_inc\
+          -I../vs130/_inc\
+          -I../../vs130/_inc\
+          -I../sysdefs/_inc\
+          -I../../sysdefs/_inc\
+          -I../basefw/_inc\
+          -I../../basefw/_inc -DNDEBUG -DOMPACC\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include-fixed\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/../../../../arm-linux-gnueabihf/include\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../arm-linux-gnueabihf/libc/usr/include ../_src/oam_task_target.c
+cl6x --openmp:device -mv6600 -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/cgt-c6x/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/openmpacc/dsp/include -I./_inc -I../_inc -I../vs130/_inc -I../../vs130/_inc -I../sysdefs/_inc -I../../sysdefs/_inc -I../basefw/_inc -I../../basefw/_inc -DNDEBUG -DOMPACC ../_src/oam_comm.c 
+--[[ cl6x: device build proxy ]]----------
+          /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/cl6x.orig --openmp:device --gen_acp_raw --advice:performance --no_bad_aliases --opt_level=3 --verbose_diagnostics  -DOMPACC -DOMPACC_TARGET -ppa --preproc_macros  -mv6600\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/cgt-c6x/include\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/openmpacc/dsp/include\
+          -I./_inc\
+          -I../_inc\
+          -I../vs130/_inc\
+          -I../../vs130/_inc\
+          -I../sysdefs/_inc\
+          -I../../sysdefs/_inc\
+          -I../basefw/_inc\
+          -I../../basefw/_inc -DNDEBUG -DOMPACC ../_src/oam_comm.c
+--!! Fixing spurious line breaks in intermediate code
+--!! .c    ../_src/oam_comm.c
+--!! int.c oam_comm.int.c
+sed --in-place='.orig' -z 's/\n"/"/g' oam_comm.int.c
+sed --in-place='.orig' -z 's/"\n/"/g' oam_comm.int.c
+cl6x --openmp:device -mv6600 -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/cgt-c6x/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/openmpacc/dsp/include -I./_inc -I../_inc -I../vs130/_inc -I../../vs130/_inc -I../sysdefs/_inc -I../../sysdefs/_inc -I../basefw/_inc -I../../basefw/_inc -DNDEBUG -DOMPACC ../_src/oam_vsmem.c 
+--[[ cl6x: device build proxy ]]----------
+          /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/cl6x.orig --openmp:device --gen_acp_raw --advice:performance --no_bad_aliases --opt_level=3 --verbose_diagnostics  -DOMPACC -DOMPACC_TARGET -ppa --preproc_macros  -mv6600\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/cgt-c6x/include\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/openmpacc/dsp/include\
+          -I./_inc\
+          -I../_inc\
+          -I../vs130/_inc\
+          -I../../vs130/_inc\
+          -I../sysdefs/_inc\
+          -I../../sysdefs/_inc\
+          -I../basefw/_inc\
+          -I../../basefw/_inc -DNDEBUG -DOMPACC ../_src/oam_vsmem.c
+"/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/cgt-c6x/include/string.h", line 252: advice #30003: 
+   (Performance) Loop at line 247 cannot be scheduled efficiently, as it
+   contains complex conditional expression. Try to simplify condition.
+"../_src/oam_vsmem.c", line 139: advice #30003: (Performance) Loop at line 139
+   cannot be scheduled efficiently, as it contains complex conditional
+   expression. Try to simplify condition.
+--!! Fixing spurious line breaks in intermediate code
+--!! .c    ../_src/oam_vsmem.c
+--!! int.c oam_vsmem.int.c
+sed --in-place='.orig' -z 's/\n"/"/g' oam_vsmem.int.c
+sed --in-place='.orig' -z 's/"\n/"/g' oam_vsmem.int.c
+cl6x --openmp:device -mv6600 -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/cgt-c6x/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/openmpacc/dsp/include -I./_inc -I../_inc -I../vs130/_inc -I../../vs130/_inc -I../sysdefs/_inc -I../../sysdefs/_inc -I../basefw/_inc -I../../basefw/_inc -DNDEBUG -DOMPACC ../_src/oam_task_target.c 
+--[[ cl6x: device build proxy ]]----------
+          /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/cl6x.orig --openmp:device --gen_acp_raw --advice:performance --no_bad_aliases --opt_level=3 --verbose_diagnostics  -DOMPACC -DOMPACC_TARGET -ppa --preproc_macros  -mv6600\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/cgt-c6x/include\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/openmpacc/dsp/include\
+          -I./_inc\
+          -I../_inc\
+          -I../vs130/_inc\
+          -I../../vs130/_inc\
+          -I../sysdefs/_inc\
+          -I../../sysdefs/_inc\
+          -I../basefw/_inc\
+          -I../../basefw/_inc -DNDEBUG -DOMPACC ../_src/oam_task_target.c
+--!! Fixing spurious line breaks in intermediate code
+--!! .c    ../_src/oam_task_target.c
+--!! int.c oam_task_target.int.c
+sed --in-place='.orig' -z 's/\n"/"/g' oam_task_target.int.c
+sed --in-place='.orig' -z 's/"\n/"/g' oam_task_target.int.c
+arm-linux-gnueabihf-gcc -I./_inc -I../_inc -I../vs130/_inc -I../../vs130/_inc -I../sysdefs/_inc -I../../sysdefs/_inc -I../basefw/_inc -I../../basefw/_inc -DNDEBUG -DOMPACC  -Wall -Wextra -Wno-empty-body -Wno-unused-parameter -fopenmp -c oam_comm.int.c 
+arm-linux-gnueabihf-gcc -I./_inc -I../_inc -I../vs130/_inc -I../../vs130/_inc -I../sysdefs/_inc -I../../sysdefs/_inc -I../basefw/_inc -I../../basefw/_inc -DNDEBUG -DOMPACC  -Wall -Wextra -Wno-empty-body -Wno-unused-parameter -fopenmp -c oam_vsmem.int.c 
+arm-linux-gnueabihf-gcc -I./_inc -I../_inc -I../vs130/_inc -I../../vs130/_inc -I../sysdefs/_inc -I../../sysdefs/_inc -I../basefw/_inc -I../../basefw/_inc -DNDEBUG -DOMPACC  -Wall -Wextra -Wno-empty-body -Wno-unused-parameter -fopenmp -c oam_task_target.int.c 
+ar rcs liboam.a liboam.cl build/oam_task.o oam_comm.int.o oam_vsmem.int.o oam_task_target.int.o oam_comm.obj oam_vsmem.obj oam_task_target.obj 
+>> DEBUG: CLACC library liboam.a created successfully.
+make[1]: Leaving directory '/home/fuchsto/workspaces/ti-oam-experiments/oam/tioamlinux.oam'
+==
+== comm_async    == OA_SHELL:        EXE: offload.bin
+==
+clacc --show_cc_opts -v -k  --hc="-I/home/fuchsto/workspaces/ti-oam-experiments/offload/include -I../oam/_inc -DNDEBUG  -Wall -Wextra -fopenmp -ffast-math" --tc="-I/home/fuchsto/workspaces/ti-oam-experiments/offload/include -I../oam/_inc -DNDEBUG" --hl="-lm -L/home/fuchsto/workspaces/ti-oam-experiments/offload../oam/_lib -L/home/fuchsto/workspaces/ti-oam-experiments/offload " --tl="-lm -L/home/fuchsto/workspaces/ti-oam-experiments/offload../oam/_lib -L/home/fuchsto/workspaces/ti-oam-experiments/offload "  offload_main.o liboam.a offload_target.c -o offload.bin
+>> DEBUG: Extra host compiler options: -I/home/fuchsto/workspaces/ti-oam-experiments/offload/include -I../oam/_inc -DNDEBUG  -Wall -Wextra -fopenmp -ffast-math
+>> DEBUG: Extra target compiler options: -I/home/fuchsto/workspaces/ti-oam-experiments/offload/include -I../oam/_inc -DNDEBUG
+>> DEBUG: Extra Host linker options: -lm -L/home/fuchsto/workspaces/ti-oam-experiments/offload../oam/_lib -L/home/fuchsto/workspaces/ti-oam-experiments/offload 
+>> DEBUG: Extra Target linker options: -lm -L/home/fuchsto/workspaces/ti-oam-experiments/offload../oam/_lib -L/home/fuchsto/workspaces/ti-oam-experiments/offload 
+>> Host CC: arm-linux-gnueabihf-gcc -I/home/fuchsto/workspaces/ti-oam-experiments/offload/include -I../oam/_inc -DNDEBUG  -Wall -Wextra -fopenmp -ffast-math
+>> Target CC: cl6x --openmp:device -mv6600 -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/cgt-c6x/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/openmpacc/dsp/include -I/home/fuchsto/workspaces/ti-oam-experiments/offload/include -I../oam/_inc -DNDEBUG 
+>> S2S: cl6x --preinclude=/tmp/gcc_predefCygnGN --openmp:host -pds=1173 -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/include -I/home/fuchsto/workspaces/ti-oam-experiments/offload/include -I../oam/_inc -DNDEBUG -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include-fixed -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/../../../../arm-linux-gnueabihf/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../arm-linux-gnueabihf/libc/usr/include 
+>> DEBUG: Executable binary name: offload.bin
+>> DEBUG: Input files: offload_main.o liboam.a offload_target.c 
+>> DEBUG: ARM object file or archive: offload_main.o
+>> DEBUG: CLACC library archive: liboam.a
+>> DEBUG: Source code file: offload_target.c
+>> DEBUG: Using /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/arm-linux-gnueabihf-gcc for HOST compilation.
+>> DEBUG: Using /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/arm-linux-gnueabihf-g++ for HOST compilation.
+>> DEBUG: Using /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/cl6x for TARGET compilation.
+>> DEBUG: Using /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/cl6x for S2S compilation.
+>> DEBUG: Using /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/clocl for TARGET compilation.
+cl6x --preinclude=/tmp/gcc_predefCygnGN --openmp:host -pds=1173 -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/include -I/home/fuchsto/workspaces/ti-oam-experiments/offload/include -I../oam/_inc -DNDEBUG -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include-fixed -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/../../../../arm-linux-gnueabihf/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../arm-linux-gnueabihf/libc/usr/include offload_target.c 
+--[[ cl6x: host build proxy ]]-----------
+          /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/cl6x.orig --openmp:host --gen_acp_raw --advice:performance --no_bad_aliases --opt_level=3 --verbose_diagnostics  -DOMPACC -DOMPACC_HOST -ppa --preproc_macros --preinclude=/tmp/gcc_predefCygnGN  -pds=1173\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/include\
+          -I/home/fuchsto/workspaces/ti-oam-experiments/offload/include\
+          -I../oam/_inc -DNDEBUG\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/include-fixed\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../lib/gcc/arm-linux-gnueabihf/5.3.1/../../../../arm-linux-gnueabihf/include\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/../arm-linux-gnueabihf/libc/usr/include offload_target.c
+"offload_target.c", line 114: error: identifier "pInner_h" is undefined
+    pObj->inner_h = pInner_h;
+                    ^
+
+"offload_target.c", line 115: error: identifier "pInner_t" is undefined
+    pObj->inner_t = pInner_t;
+                    ^
+
+"offload_target.c", line 86: warning: variable "pObj_inner_h" was declared but
+          never referenced
+    Inner * pObj_inner_h   = pObj->inner_h;
+            ^
+
+"offload_target.c", line 87: warning: variable "pInner_h_pInts" was set but
+          never used
+    int   * pInner_h_pInts = pObj->inner_h->pInts;
+            ^
+
+"offload_target.c", line 89: warning: variable "pObj_inner_t" was declared but
+          never referenced
+    Inner * pObj_inner_t   = pObj->inner_t;
+            ^
+
+"offload_target.c", line 90: warning: variable "pInner_t_pInts" was set but
+          never used
+    int   * pInner_t_pInts = pObj->inner_t->pInts;
+            ^
+
+2 errors detected in the compilation of "offload_target.c".
+
+>> Compilation failure
+cl6x --openmp:device -mv6600 -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/cgt-c6x/include -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/openmpacc/dsp/include -I/home/fuchsto/workspaces/ti-oam-experiments/offload/include -I../oam/_inc -DNDEBUG offload_target.c 
+--[[ cl6x: device build proxy ]]----------
+          /opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/linux-devkit/sysroots/x86_64-arago-linux/usr/bin/cl6x.orig --openmp:device --gen_acp_raw --advice:performance --no_bad_aliases --opt_level=3 --verbose_diagnostics  -DOMPACC -DOMPACC_TARGET -ppa --preproc_macros  -mv6600\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/cgt-c6x/include\
+          -I/opt/ti-processor-sdk-linux-rt-am57xx-evm-03.03.00.04/targetNFS/usr/share/ti/openmpacc/dsp/include\
+          -I/home/fuchsto/workspaces/ti-oam-experiments/offload/include\
+          -I../oam/_inc -DNDEBUG offload_target.c
+"offload_target.c", line 114: error: identifier "pInner_h" is undefined
+    pObj->inner_h = pInner_h;
+                    ^
+
+"offload_target.c", line 115: error: identifier "pInner_t" is undefined
+    pObj->inner_t = pInner_t;
+                    ^
+
+"offload_target.c", line 86: warning: variable "pObj_inner_h" was declared but
+          never referenced
+    Inner * pObj_inner_h   = pObj->inner_h;
+            ^
+
+"offload_target.c", line 87: warning: variable "pInner_h_pInts" was set but
+          never used
+    int   * pInner_h_pInts = pObj->inner_h->pInts;
+            ^
+
+"offload_target.c", line 89: warning: variable "pObj_inner_t" was declared but
+          never referenced
+    Inner * pObj_inner_t   = pObj->inner_t;
+            ^
+
+"offload_target.c", line 90: warning: variable "pInner_t_pInts" was set but
+          never used
+    int   * pInner_t_pInts = pObj->inner_t->pInts;
+            ^
+
+2 errors detected in the compilation of "offload_target.c".
+
+>> Compilation failure
+--!! Fixing spurious line breaks in intermediate code
+--!! .c    offload_target.c
+--!! int.c offload_target.int.c
+sed --in-place='.orig' -z 's/\n"/"/g' offload_target.int.c
+sed --in-place='.orig' -z 's/"\n/"/g' offload_target.int.c
+sed: can't read offload_target.int.c: No such file or directory
+sed: can't read offload_target.int.c: No such file or directory
+>> ERROR: Target compilation of offload_target.c failed.
+Makefile:53: recipe for target 'offload.bin' failed
+make: *** [offload.bin] Error 1
