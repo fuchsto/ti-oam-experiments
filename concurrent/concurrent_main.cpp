@@ -166,6 +166,7 @@ int main(int argc, char *argv[])
                                  params.num_target_repeat,
                                  host_signals);
 
+#if CONCURRENT_TARGET_TASK
   target_future_b = std::async(std::launch::async,
                                task_b_target,
                                  array_b_in,
@@ -173,6 +174,7 @@ int main(int argc, char *argv[])
                                  params.array_size,
                                  params.num_target_repeat,
                                  host_signals);
+#endif
 
   oam_comm__flush_signals(host_signals);
 
@@ -192,7 +194,18 @@ int main(int argc, char *argv[])
 
   /* Block until completion of target task: */
   int result_a = target_future_a.get();
+#if CONCURRENT_TARGET_TASK
   int result_b = target_future_b.get();
+#else
+  target_future_b = std::async(std::launch::async,
+                               task_b_target,
+                                 array_b_in,
+                                 array_b_out,
+                                 params.array_size,
+                                 params.num_target_repeat,
+                                 host_signals);
+  int result_b = target_future_b.get();
+#endif
 
   if (params.cancel_task) {
     std::cout << "[ host ] -- [ "

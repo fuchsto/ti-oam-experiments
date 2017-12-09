@@ -42,30 +42,30 @@ int task_b_target(
                      map(tofrom: out_buffer[0:size], acc, \
                                  host_signals[0:1])
   {
-    int    i;
+    int    i, r;
     int    aborted;
     double ts_start = omp_get_wtime();
 
+    LOG_DEBUG(">>> task_b_target()");
+
     acc = 0;
-    #pragma omp parallel \
-                private(i, aborted) \
-                shared(host_signals, acc)
+//  pragma omp parallel \
+//             private(i, aborted) \
+//             shared(host_signals, acc)
     {
       aborted = 0;
-      #pragma omp for
-      for (i = 0; i < repeats; i++) {
-        // Poll cancellation request:
-        if (0 == oam_task__poll_cancel_request(
-                   ts_start, host_signals, &aborted)) {
-          // Print progress:
-          if (i % (repeats / 10) == (int)(__core_num())) {
-            #pragma omp atomic
-            acc += ACC_INCREMENT(acc);
+      for (r = 0; r < repeats; r++) {
+//      pragma omp for
+        for (i = 0; i < size; i++) {
+          // Poll cancellation request:
+          if (0 == oam_task__poll_cancel_request(
+                     ts_start, host_signals, &aborted)) {
+            out_buffer[i] = in_buffer[i] + 100;
           }
-          out_buffer[size  / (i+1)] = in_buffer[repeats / i] + 100;
         }
       }
     }
+    LOG_DEBUG("<<< task_b_target()");
   } // omp target
 
   return acc;
