@@ -8,6 +8,7 @@
 - How-tos:
       - http://processors.wiki.ti.com/index.php/Linux_IPC_on_AM57xx
       - http://processors.wiki.ti.com/index.php/Processor_SDK_IPC_Quick_Start_Guide
+      - http://processors.wiki.ti.com/index.php/Processor_SDK_RTOS_Examples
       - http://processors.wiki.ti.com/index.php/Processor_SDK_RTOS_Software_Developer_Guide
       - http://processors.wiki.ti.com/index.php/DRA7xx_GLSDK_Software_Developers_Guide 
         (Core-to-core, recommended)
