@@ -20,6 +20,8 @@
  */
 #define SYMMETRIC_MEMORY__USE_DDR
 
+#define CONCURRENT_TARGET_TASK 1
+
 #include <oam/oam_types.h>
 #include <oam/oam_time.h>
 #include <oam/oam_vsmem.h>
@@ -158,6 +160,7 @@ int main(int argc, char *argv[])
   std::future<int> target_future_b;
 
   /* Start target task asynchronously: */
+  std::cout << "[ host ] -- launch task A " << std::endl;
   target_future_a = std::async(std::launch::async,
                                task_a_target,
                                  array_a_in,
@@ -166,7 +169,8 @@ int main(int argc, char *argv[])
                                  params.num_target_repeat,
                                  host_signals);
 
-#if CONCURRENT_TARGET_TASK
+#if defined(CONCURRENT_TARGET_TASK)
+  std::cout << "[ host ] -- launch task B " << std::endl;
   target_future_b = std::async(std::launch::async,
                                task_b_target,
                                  array_b_in,
@@ -192,11 +196,8 @@ int main(int argc, char *argv[])
     ts_cancel_req_end   = oam_timestamp();
   }
 
-  /* Block until completion of target task: */
-  int result_a = target_future_a.get();
-#if CONCURRENT_TARGET_TASK
-  int result_b = target_future_b.get();
-#else
+#if !defined(CONCURRENT_TARGET_TASK)
+  std::cout << "[ host ] -- launch task B " << std::endl;
   target_future_b = std::async(std::launch::async,
                                task_b_target,
                                  array_b_in,
@@ -204,8 +205,13 @@ int main(int argc, char *argv[])
                                  params.array_size,
                                  params.num_target_repeat,
                                  host_signals);
-  int result_b = target_future_b.get();
 #endif
+  std::cout << "[ host ] -- await task B " << std::endl;
+  int result_b = target_future_b.get();
+
+  /* Block until completion of target task: */
+  std::cout << "[ host ] -- await task A " << std::endl;
+  int result_a = target_future_a.get();
 
   if (params.cancel_task) {
     std::cout << "[ host ] -- [ "
