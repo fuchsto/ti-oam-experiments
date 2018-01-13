@@ -132,17 +132,17 @@ int main(int argc, char *argv[])
   }
 
   /* ---------------------------------------------------------------------- *
-   * Print time measurements summary:                                       *
-   * ---------------------------------------------------------------------- */
-  print_kernel_durations("target map latency",      oam_target_map_durations);
-  print_kernel_durations("symmetric alloc latency", oam_sym_alloc_durations);
-
-  /* ---------------------------------------------------------------------- *
    * Finalize:                                                              *
    * ---------------------------------------------------------------------- */
 
   oam_vsmem__symmetric_free(in_buffer);
   oam_vsmem__symmetric_free(out_buffer);
+
+  /* ---------------------------------------------------------------------- *
+   * Print time measurements summary:                                       *
+   * ---------------------------------------------------------------------- */
+  print_kernel_durations("target map latency",      oam_target_map_durations);
+  print_kernel_durations("symmetric alloc latency", oam_sym_alloc_durations);
 
   return EXIT_SUCCESS;
 }

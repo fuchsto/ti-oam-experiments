@@ -70,8 +70,14 @@ void data_map_target(
   char * out_buffer,
   int    size)
 {
+  int i;
   SomeObject * pObj    = (SomeObject*)(
                             oam_vsmem__symmetric_malloc(sizeof(SomeObject)));
+  if (pObj == NULL) {
+    printf("!!! Failed to allocate offload object\n");
+    return;
+  }
+
   pObj->value          = size;
 
   // inner_h allocated at host:
@@ -80,7 +86,15 @@ void data_map_target(
   Inner_init(pObj->inner_h, 5, 10);
 
   // inner_t allocated in target section:
-  pObj->inner_t        = NULL;
+  pObj->inner_t        = (Inner*)(
+                            oam_vsmem__symmetric_malloc(sizeof(Inner)));
+  Inner_init(pObj->inner_t, 5, 10);
+
+  for (i = 0; i < pObj->inner_t->nInts; i++) {
+    pObj->inner_t->pInts[i] = 9;
+  }
+
+  Inner * host__pObj_inner_t_pInts = pObj->inner_t->pInts;
 
   // ------------------------------------------------------------------------
   // Parameter packing:
@@ -92,63 +106,83 @@ void data_map_target(
   int   * pObj_inner_t_pInts = pObj->inner_t->pInts;
   int     pObj_inner_t_nInts = pObj->inner_t->nInts;
 
-  printf("data_map_target: in_buffer     |> %p[%d]", in_buffer, size);
-  printf("data_map_target: inner_h       |> %p",     pObj_inner_h);
-  printf("data_map_target: inner_h_pInts |> %p[%d]", pObj_inner_h_pInts,
-                                                     pObj_inner_h_nInts);
-  printf("data_map_target: inner_t       |> %p",     pObj_inner_t);
-  printf("data_map_target: inner_t_pInts |> %p[%d]", pObj_inner_t_pInts,
-                                                     pObj_inner_t_nInts);
+  printf("data_map_target: in_buffer     |> %p[%d]\n", in_buffer, size);
+  printf("data_map_target: inner_h       |> %p\n",     pObj_inner_h);
+  printf("data_map_target: inner_h_pInts |> %p[%d]\n", pObj_inner_h_pInts,
+                                                       pObj_inner_h_nInts);
+  printf("data_map_target: inner_t       |> %p\n",     pObj_inner_t);
+  printf("data_map_target: inner_t_pInts |> %p[%d]\n", pObj_inner_t_pInts,
+                                                       pObj_inner_t_nInts);
   #pragma omp target map(to:     in_buffer[0:size], size)                  \
                      map(tofrom: pObj[0:1],                                \
                                  pObj_inner_h[0:1],                        \
                                  pObj_inner_h_pInts[0:pObj_inner_h_nInts], \
-                                 out_buffer[0:size])                       \
-                     map(from:   pObj_inner_t[0:1],                        \
+                                 out_buffer[0:size],                       \
+                                 pObj_inner_t[0:1],                        \
                                  pObj_inner_t_pInts[0:pObj_inner_t_nInts])
   {
-    #pragma omp single
+//  #pragma omp single
     {
-      printf("data_map_target: in_buffer     -> %p[%d]", in_buffer, size);
-      printf("data_map_target: inner_h       -> %p",     pObj_inner_h);
-      printf("data_map_target: inner_h_pInts -> %p[%d]", pObj_inner_h_pInts,
-                                                         pObj_inner_h_nInts);
-      printf("data_map_target: inner_t       -> %p",     pObj_inner_t);
-      printf("data_map_target: inner_t_pInts -> %p[%d]", pObj_inner_t_pInts,
-                                                         pObj_inner_t_nInts);
+      printf("data_map_target: in_buffer     -> %p[%d]\n", in_buffer, size);
+      printf("data_map_target: inner_h       -> %p\n",     pObj_inner_h);
+      printf("data_map_target: inner_h_pInts -> %p[%d]\n", pObj_inner_h_pInts,
+                                                           pObj_inner_h_nInts);
+      printf("data_map_target: inner_t       -> %p\n",     pObj_inner_t);
+      printf("data_map_target: inner_t_pInts -> %p[%d]\n", pObj_inner_t_pInts,
+                                                           pObj_inner_t_nInts);
+      pObj->inner_h        = pObj_inner_h;
+      pObj->inner_h->pInts = pObj_inner_h_pInts;
+      pObj->inner_t        = pObj_inner_t;
+      pObj->inner_t->pInts = pObj_inner_t_pInts;
 
-      pObj->inner_t = (Inner*)(oam_vsmem__symmetric_malloc(sizeof(Inner)));
       Inner_init(pObj->inner_t, 5, 6);
 
+#if 0
       out_buffer[0] += in_buffer[0];
       int i;
       for (i = 0; i < min_(size, pObj->inner_h->nInts); i++) {
         out_buffer[i] += pObj->inner_h->pInts[i];
       }
+#endif
 
+      pObj_inner_h       = pObj->inner_h;
       pObj_inner_h_pInts = pObj->inner_h->pInts;
+      pObj_inner_t       = pObj->inner_t;
       pObj_inner_t_pInts = pObj->inner_t->pInts;
 
-      printf("data_map_target: in_buffer     <- %p[%d]", in_buffer, size);
-      printf("data_map_target: inner_h       <- %p",     pObj_inner_h);
-      printf("data_map_target: inner_h_pInts <- %p[%d]", pObj_inner_h_pInts,
-                                                         pObj_inner_h_nInts);
-      printf("data_map_target: inner_t       <- %p",     pObj_inner_t);
-      printf("data_map_target: inner_t_pInts <- %p[%d]", pObj_inner_t_pInts,
-                                                         pObj_inner_t_nInts);
+      printf("data_map_target: in_buffer     <- %p[%d]\n", in_buffer, size);
+      printf("data_map_target: inner_h       <- %p\n",     pObj_inner_h);
+      printf("data_map_target: inner_h_pInts <- %p[%d]\n", pObj_inner_h_pInts,
+                                                           pObj_inner_h_nInts);
+      printf("data_map_target: inner_t       <- %p\n",     pObj_inner_t);
+      printf("data_map_target: inner_t_pInts <- %p[%d]\n", pObj_inner_t_pInts,
+                                                           pObj_inner_t_nInts);
     }
   }
-  printf("data_map_target: in_buffer     <| %p[%d]", in_buffer, size);
-  printf("data_map_target: inner_h       <| %p",     pObj_inner_h);
-  printf("data_map_target: inner_h_pInts <| %p[%d]", pObj_inner_h_pInts,
-                                                     pObj_inner_h_nInts);
-  printf("data_map_target: inner_t       <| %p",     pObj_inner_t);
-  printf("data_map_target: inner_t_pInts <| %p[%d]", pObj_inner_t_pInts,
-                                                     pObj_inner_t_nInts);
+  printf("data_map_target: in_buffer     <| %p[%d]\n", in_buffer, size);
+  printf("data_map_target: inner_h       <| %p\n",     pObj_inner_h);
+  printf("data_map_target: inner_h_pInts <| %p[%d]\n", pObj_inner_h_pInts,
+                                                       pObj_inner_h_nInts);
+  printf("data_map_target: inner_t       <| %p\n",     pObj_inner_t);
+  printf("data_map_target: inner_t_pInts <| %p[%d]\n", pObj_inner_t_pInts,
+                                                       pObj_inner_t_nInts);
   pObj->inner_h        = pObj_inner_h;
   pObj->inner_h->pInts = pObj_inner_h_pInts;
   pObj->inner_t        = pObj_inner_t;
   pObj->inner_t->pInts = pObj_inner_t_pInts;
+
+  if (host__pObj_inner_t_pInts) {
+    oam_vsmem__symmetric_free(host__pObj_inner_t_pInts);
+  }
+
+  printf("data_map_target: inner_h values:\n");
+  for (i = 0; i < pObj->inner_h->nInts; i++) {
+     printf("data_map_target:      %d", (int)(pObj->inner_h->pInts[i]));
+  }
+  printf("data_map_target: inner_t values:\n");
+  for (i = 0; i < pObj->inner_t->nInts; i++) {
+     printf("data_map_target:      %d", (int)(pObj->inner_t->pInts[i]));
+  }
 }
 
 void sym_alloc_target(
