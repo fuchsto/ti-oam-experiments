@@ -5,10 +5,7 @@
 #include <oam/macro.h>
 
 #if !defined(OMPACC)
-#include <log.h>
-
 #include <basefw/vsmem.h>
-#include <basefw/bfwlog.h>
 #endif
 
 /* Note:
@@ -69,9 +66,9 @@ int EXTERNAL_ALGO_MEMORY = EXTERNAL_MEMORY;
 void * oam_vsmem__set(
   void                * dst,
   const unsigned char   value,
-  unsigned long         nbytes)
+  unsigned int          nbytes)
 {
-  LOG_DEBUG("oam_vsmem__set: dst:(%p) value:(%d) nbytes:(%lu)",
+  LOG_DEBUG("oam_vsmem__set: dst:(%p) value:(%d) nbytes:(%d)",
             dst, value, nbytes);
 
   return memset(dst, value, nbytes);
@@ -106,24 +103,33 @@ int oam_vsmem__compare(
 int oam_vsmem__freeMem(
   void                * pMem)
 {
+  return VSMEM_freeMem(pMem);
+
+  // No alternative target implementation required so far
+#if 0
   if (NULL == pMem) {
     LOG_DEBUG("oam_vsmem__freeMem(%p) -> failed (-1)", pMem);
     return -1;
   }
-#if defined(OMPACC)
+#if defined(OMPACC_TARGET)
   oam_vsmem__symmetric_free(pMem);
 #else
   return VSMEM_freeMem(pMem);
 #endif
   return 1;
+#endif
 }
 
 #if MEMORY_DEBUG_SUPPORTED
 int oam_vsmem__freeMemDebug(
   void                * pMem)
 {
+  return VSMEM_freeMemDebug(pMem);
+
+  // No alternative target implementation required so far
+#if 0
   LOG_DEBUG("oam_vsmem__freeMem(%p)", pMem);
-#if defined(OMPACC)
+#if defined(OMPACC_TARGET)
   oam_vsmem__symmetric_free(pMem);
 #else
   VSMEM_freeMemDebug(pMem);
@@ -136,7 +142,7 @@ int oam_vsmem__freeTag(
   oam_vsmem__eMemTag    tag)
 {
   LOG_DEBUG("oam_vsmem__freeTag: tag:(%dp)", tag);
-#if defined(OMPACC)
+#if 0 && defined(OMPACC)
   return 1;
 #else
   return VSMEM_freeTag(tag);
@@ -145,12 +151,12 @@ int oam_vsmem__freeTag(
 
 void * oam_vsmem__getMem(
   int                   segid,
-  unsigned long         size,
+  unsigned int          size,
   oam_vsmem__eMemTag    tag)
 {
   void* pmem = 0;
 
-#if defined(OMPACC)
+#if defined(OMPACC_TARGET)
   pmem = oam_vsmem__getAlignedMem(segid, size, tag, 8, NULL);
 #else
   pmem = VSMEM_getMem(segid, size, tag);
@@ -161,20 +167,17 @@ void * oam_vsmem__getMem(
 
 void * oam_vsmem__getAlignedMem(
   int                   segid,
-  unsigned long         size,
+  unsigned int          size,
   oam_vsmem__eMemTag    tag,
   unsigned int          align,
   const char          * pinitializer)
 {
   LOG_DEBUG("oam_vsmem__getAlignedMem() "
-            "segId:(%d) size:(%lu) tag:(%d) align:(%d), pInit:(%p)",
+            "segId:(%d) size:(%d) tag:(%d) align:(%d), pInit:(%p)",
             segid, size, tag, align, pinitializer);
   void * pmem = NULL;
-#if defined(OMPACC)
-  pmem = oam_vsmem__symmetric_memalign(align, size);
-  if (pinitializer) {
-    oam_vsmem__set(pmem, *pinitializer, size);
-  }
+#if defined(OMPACC_TARGET)
+  pmem = oam_vsmem__symmetric_malloc(size);
 #else
   pmem = VSMEM_getAlignedMem(segid, size, tag, align, pinitializer);
 #endif
@@ -244,14 +247,11 @@ int oam_vsmem__strEq(
  * Symmetric memory shared between host and targets                        *
  * ======================================================================= */
 
-// static unsigned long symmetric_alloc = 0;
-// static unsigned int symmetric_alloc_count = 0;
-
 void * oam_vsmem__symmetric_malloc(
-  unsigned long  nbytes)
+  unsigned int   nbytes)
 {
   void * pmem;
-  LOG_DEBUG("oam_vsmem__symmetric_malloc(nbytes:%lu)", nbytes);
+  LOG_DEBUG("oam_vsmem__symmetric_malloc(nbytes:%d)", nbytes);
 #if defined(OMPACC)
 # ifdef SYMMETRIC_MEMORY__USE_DDR
   pmem = __malloc_ddr(nbytes);
@@ -259,45 +259,9 @@ void * oam_vsmem__symmetric_malloc(
   pmem = __malloc_msmc(nbytes);
 # endif
 #else
-  pmem = VSMEM_getMem(EXTERNAL_MEMORY, nbytes, (VSMEM_eMemTag)ALGO_MEM);
+  pmem = malloc(nbytes);
 #endif
-  LOG_DEBUG("oam_vsmem__symmetric_malloc(nbytes:%lu) -> 0x%p", nbytes, pmem);
-  return pmem;
-}
-
-void * oam_vsmem__symmetric_memalign(
-  unsigned int   align,
-  unsigned long  nbytes)
-{
-  void * pmem;
-  LOG_DEBUG("oam_vsmem__symmetric_memalign(align:%u, nbytes:%lu)",
-            align, nbytes);
-#if defined(OMPACC)
-# ifdef SYMMETRIC_MEMORY__USE_DDR
-  pmem = __memalign_ddr(align, nbytes);
-# else
-  pmem = __memalign_msmc(align, nbytes);
-# endif
-#else
-  pmem = VSMEM_getAlignedMem(
-           EXTERNAL_MEMORY, nbytes, (VSMEM_eMemTag)ALGO_MEM, align, NULL);
-#endif
-  LOG_DEBUG("oam_vsmem__symmetric_memalign(align:%u nbytes:%lu) -> 0x%p",
-            align, nbytes, pmem);
-  return pmem;
-}
-
-void * oam_vsmem__symmetric_scratch_malloc(
-  unsigned long         nbytes)
-{
-  void * pmem;
-  LOG_DEBUG("oam_vsmem__symmetric_scratch_malloc(nbytes:%lu)", nbytes);
-#if defined(OMPACC)
-  pmem = __malloc_msmc(nbytes);
-#else
-  pmem = VSMEM_getMem(EXTERNAL_MEMORY, nbytes, (VSMEM_eMemTag)ALGO_MEM);
-#endif
-  LOG_DEBUG("oam_vsmem__symmetric_scratch_malloc(nbytes:%lu) -> 0x%p", nbytes, pmem);
+  LOG_DEBUG("oam_vsmem__symmetric_malloc(nbytes:%d) -> 0x%p", nbytes, pmem);
   return pmem;
 }
 
@@ -314,33 +278,19 @@ void oam_vsmem__symmetric_free(
 # endif
 #else
   LOG_DEBUG("oam_vsmem__symmetric_free(0x%p) -> free", pmem);
-  VSMEM_freeMem(pmem);
+  free(pmem);
 #endif
 }
-
-void oam_vsmem__symmetric_scratch_free(
-  void         * pmem)
-{
-  LOG_DEBUG("oam_vsmem__symmetric_scratch_free(0x%p)", pmem);
-  if (pmem == NULL) { return; }
-#if defined(OMPACC)
-  __free_msmc(pmem);
-#else
-  LOG_DEBUG("oam_vsmem__symmetric_scratch_free(0x%p) -> free", pmem);
-  VSMEM_freeMem(pmem);
-#endif
-}
-
 
 void oam_vsmem__symmetric_heap_init(
-  void          * pmem,
-  unsigned long   nbytes)
+  void         * pmem,
+  unsigned int   nbytes)
 {
 #if defined(OMPACC)
   char * pmem_c = (char *)(pmem);
   #pragma omp target map(to: nbytes, pmem_c[0:nbytes])
   {
-    LOG_DEBUG("oam_vsmem__heap_init(0x%p, %lu)", pmem, nbytes);
+    LOG_DEBUG("oam_vsmem__heap_init(0x%p, %d)", pmem, nbytes);
 # ifdef SYMMETRIC_MEMORY__USE_DDR
     __heap_init_ddr((char *)(pmem_c), nbytes);
 # else
@@ -350,41 +300,12 @@ void oam_vsmem__symmetric_heap_init(
 #endif
 }
 
-void * oam_vsmem__symmetric_heap_create(
-  unsigned long  nbytes)
-{
-#if defined(OMPACC)
-  char * pmem_c = (char *)(oam_vsmem__symmetric_malloc(nbytes));
-  if (pmem_c) {
-    oam_vsmem__symmetric_heap_init(pmem_c, nbytes);
-  } else {
-    LOG_ERROR("!!! Failed to allocate symmetric heap (%lu bytes)", nbytes);
-  }
-  return pmem_c;
-#else
-  /*
-   * ARM-only build, no symmetric heap allocation required:
-   */
-  return (char *)(-1);
-#endif
-}
-
-void oam_vsmem__symmetric_heap_destroy(
-  void * pmem)
-{
-#if defined(OMPACC)
-  if (pmem != NULL && pmem != (char *)(-1)) {
-    oam_vsmem__symmetric_free(pmem);
-  }
-#endif
-}
-
 /* ======================================================================= *
  * Local memory in target L2 cache                                         *
  * ======================================================================= */
 
 void * oam_vsmem__local_malloc(
-  unsigned long  nbytes,
+  unsigned int   nbytes,
   OAM_VSMEM__LOCAL_ALLOC_TYPE atype)
 {
   char * local_pmem = NULL;
@@ -401,15 +322,15 @@ void * oam_vsmem__local_malloc(
     }
   }
 #else
-  local_pmem = VSMEM_getMem(EXTERNAL_MEMORY, nbytes, (VSMEM_eMemTag)ALGO_MEM);
+  local_pmem = malloc(nbytes);
 #endif
   LOG_DEBUG("oam_vsmem__local_malloc > (%p)", local_pmem);
   return local_pmem;
 }
 
 void oam_vsmem__local_heap_init(
-  void          * pmem,
-  unsigned long   nbytes)
+  void         * pmem,
+  unsigned int   nbytes)
 {
 #if defined(OMPACC)
   // Unused dummy pointer required for function interface.

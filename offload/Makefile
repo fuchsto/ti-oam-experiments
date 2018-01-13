@@ -28,8 +28,8 @@ export LC_ALL=C
 
 # CC_ARM_OPTS     = -march=armv7-a -mtune=cortex-a15 -mfloat-abi=hard -mfpu=vfp
 
-CPPFLAGS						 := $(CPPFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS) -DOMPACC
-CFLAGS							 := $(CFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS)
+CPPFLAGS						 := $(CPPFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS) -DOMPACC -fopenmp
+CFLAGS							 := $(CFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS) -fopenmp
 
 OA_TC_OPTS      = $(INCLUDE_PATHS) $(CC_DFLAGS)
 OA_HC_OPTS      = $(INCLUDE_PATHS) $(CC_DFLAGS) $(CC_ARM_OPTS) -Wall -Wextra -fopenmp -ffast-math

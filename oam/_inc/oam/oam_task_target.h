@@ -15,6 +15,14 @@
 void __cache_l2_flush(void);
 void __cache_l1d_flush(void);
 
+
+/**
+ * Register the start of a target task.
+ * To be called at beginning of target offload region.
+ */
+void oam_task__enter(
+  HostMessage * host_signals);
+
 /**
  * Poll host signals handle to test if the current thread's task is to be
  * aborted.

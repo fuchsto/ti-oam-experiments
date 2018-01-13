@@ -11,13 +11,20 @@
 extern "C" {
 #endif
 
+
+HostMessage * oam_comm__host_signals_init(
+  HostMessage * host_mesg,
+  long poll_interval_us,
+  long timeout_after_us);
+
 /**
  * Creates a new host signals descriptor for a target task with specified
  * poll interval and timeout, in milliseconds.
  */
 HostMessage * oam_comm__host_signals_new(
-  int poll_interval_us,
-  int timeout_after_us);
+  long poll_interval_us,
+  long timeout_after_us);
+
 
 /**
  * Deletes the specified host signals descriptor.
@@ -57,7 +64,7 @@ void oam_comm__update_host_data(
 #pragma omp declare target
 
 #include <omp.h>
-#include <stdio.h>
+// #include <stdio.h>
 
 // See:
 // http://downloads.ti.com/mctools/esd/docs/opencl/memory/cache-operations.html

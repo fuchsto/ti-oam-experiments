@@ -23,7 +23,7 @@ static inline ts_t oam_timestamp();
 #pragma omp end declare target
 
 /**
- * Returns a current time stamp.
+ * Returns a current time stamp in seconds.
  * Note that time measurements at host and target are unrelated and cannot
  * be compared.
  */
@@ -31,7 +31,7 @@ static inline ts_t oam_timestamp()
 {
   /* Alternative methods to obtain timestamp: */
 
-#if defined(_OPENMP) || defined(OMPACC)
+#if defined(_OPENMP)
   /* - Any target with OpenMP support, or OpenMP accelerator model explicitly
    *   enabled in build. Using the wrapper provided by OpenMP interface.
    *
@@ -40,23 +40,7 @@ static inline ts_t oam_timestamp()
    * ! omp_get_wtime will not give meaningful results.
    */
   return omp_get_wtime();
-#elif defined(ARMLINUX)
-  /* - ARM target but no OpenMP support, using clock_gettime provided by
-   *   Linux base system.
-   *
-   * ! NOTE that this requires linker flag -lrt which is not supported by
-   * ! cl6x target compiler.
-   */
-# if TODO__FIX_ME
-  struct timespec ts;
-  long long timestamp;
-  clock_gettime(CLOCK_REALTIME, &ts); /* or: CLOCK_MONOTONIC */
-  timestamp = ts.tv_sec * 1000000000LL + ts.tv_nsec;
-  return (double)(timestamp) * 1.0e-6;
-# else
-  return 0;
-# endif
-#else
+#elif defined(OMPACC_TARGET)
   /* - Non-Linux target without OpenMP support, assuming DSP build.
    *   Using CPU cycle counter (TLSC on ARM, RDTSC on x64) wrapper provided
    *   by underlying OpenCL runtime.
@@ -66,6 +50,24 @@ static inline ts_t oam_timestamp()
    * ! but not actual elapsed wall-clock time.
    */
   return __clock64();
+#elif defined(ARMLINUX)
+  /* - ARM target but no OpenMP support, using clock_gettime provided by
+   *   Linux base system.
+   *
+   * ! NOTE that this requires linker flag -lrt which is not supported by
+   * ! cl6x target compiler.
+   */
+//# if TODO__FIX_ME
+  struct timespec ts;
+  long long timestamp;
+  clock_gettime(CLOCK_REALTIME, &ts); /* or: CLOCK_MONOTONIC */
+  timestamp = ts.tv_sec * 1000000000LL + ts.tv_nsec;
+  return (double)(timestamp) * 1.0e-6;
+//# else
+//   return 0;
+//# endif
+#else
+# error "Could not resolve implementation for oam_timestamp()"
 #endif
 }
 

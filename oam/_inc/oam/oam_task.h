@@ -13,13 +13,6 @@ extern "C" {
 #endif
 
 /**
- * Register the start of a target task.
- * To be called before first target offload region.
- */
-void oam_task__enter(
-  HostMessage * host_signals);
-
-/**
  * Send cancellation request signal to all targets listening on the
  * specified host signals handle.
  */
@@ -32,6 +25,28 @@ void oam_task__request_cancel(
  */
 void oam_task__step(
   HostMessage * host_signals);
+
+/**
+ * Finalize the target offload task, states that the target code's owner
+ * thread can safely be joined.
+ * To be called in host code when the target offload region returned.
+ */
+void oam_task__finalize(
+  HostMessage * host_signals);
+
+/**
+ * Whether the offloaded task has been finalized and the code's owner
+ * thread can safely be joined.
+ */
+static inline int oam_task__finalized(
+  HostMessage * host_signals)
+{
+#ifdef OMPACC
+  return host_signals->targets_entered == 0;
+#else
+  return 1;
+#endif
+}
 
 /**
  * Whether the specified host signals handle requested cancellation of

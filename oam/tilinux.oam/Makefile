@@ -9,7 +9,9 @@ endif
 
 INCLUDE_PATHS					= -I./_inc \
 												-I../_inc \
+												-I../../ \
 												-I../portlx/_inc/portlx \
+												-I../../portlx/_inc \
 												-I../../portlx/_inc/portlx \
 												-I../vs130/_inc \
 												-I../../vs130/_inc \

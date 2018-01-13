@@ -63,43 +63,24 @@ int main(int argc, char *argv[])
    * ---------------------------------------------------------------------- */
   int    buffer_size_a    = 1024 * kb_alloc_a;
   int    buffer_size_b    = 1024 * kb_alloc_b;
-  int    sym_heap_a_size  = 2 * buffer_size_a; /* size of in + out buffers */
-  int    sym_heap_b_size  = 2 * buffer_size_b; /* size of in + out buffers */
+  int    sym_heap_a_size  = 4 * buffer_size_a; /* size of in + out buffers */
   char * symmetric_heap_a;
-  char * symmetric_heap_b;
-
-  if (use_sym_heap) {
-    std::cout << "Using symmetric heap ";
-    symmetric_heap_a = (char *)(oam_vsmem__symmetric_malloc(sym_heap_a_size));
-    symmetric_heap_b = (char *)(oam_vsmem__symmetric_malloc(sym_heap_b_size));
-  } else {
-    std::cout << "Allocating buffer at host ";
-    symmetric_heap_a = (char *)(malloc(sym_heap_a_size));
-    symmetric_heap_b = (char *)(malloc(sym_heap_b_size));
-  }
 
   /* ---------------------------------------------------------------------- *
    * Initialize the pre-allocated buffers as new DDR and MSMC heaps         *
    * accesible to DSP cores.                                                *
    * ---------------------------------------------------------------------- */
-  std::cout << "(" << sym_heap_a_size << " + " << sym_heap_b_size
-            << " bytes = "
+  std::cout << "sym. heap size: " << sym_heap_a_size << " bytes = "
             << std::setprecision(2) << std::fixed
-            << static_cast<double>(sym_heap_a_size) / 1024 / 1024 << " MB)"
+            << static_cast<double>(sym_heap_a_size) / 1024 / 1024 << " MB"
+            << std::endl;
+  std::cout << "buffer size:    " << buffer_size_a << " bytes = "
+            << std::setprecision(2) << std::fixed
+            << static_cast<double>(buffer_size_a) / 1024 / 1024 << " MB"
             << std::endl;
 
-  if (use_sym_heap) {
-    oam_vsmem__symmetric_heap_init(symmetric_heap_a, sym_heap_a_size);
-//  oam_vsmem__symmetric_heap_init(symmetric_heap_b, sym_heap_b_size);
-  }
-
-  for (int i = 0; i < sym_heap_a_size; i++) {
-    symmetric_heap_a[i] = (char)(i % 255);
-  }
-
-  for (int i = 0; i < sym_heap_b_size; i++) {
-//  symmetric_heap_b[i] = (char)(255 - (i % 255));
-  }
+  char * in_buffer  = (char *)oam_vsmem__symmetric_malloc(buffer_size_a);
+  char * out_buffer = (char *)oam_vsmem__symmetric_malloc(buffer_size_a);
 
   /* ---------------------------------------------------------------------- *
    * Run kernels on DSPs and record time to completion at host:             *
@@ -111,13 +92,25 @@ int main(int argc, char *argv[])
   for (int i = 0; i < num_repeat; i++) {
     ts_t target_start;
 
+    std::cout << "Initializing symmetric heap" << std::endl;
+    symmetric_heap_a = (char *)(oam_vsmem__symmetric_malloc(sym_heap_a_size));
+    oam_vsmem__symmetric_heap_init(symmetric_heap_a, sym_heap_a_size);
+
+    for (int i = 0; i < buffer_size_a; i++) {
+      in_buffer[i]  = i % buffer_size_a;
+      out_buffer[i] = i % 3;
+    }
+
+    std::cout << ">>> data_map_target() ..." << std::endl;
     target_start = oam_timestamp();
     {
       data_map_target(symmetric_heap_a, symmetric_heap_a + buffer_size_a,
                       buffer_size_a);
     }
     oam_target_map_durations.push_back(oam_elapsed_since(target_start));
+    std::cout << "<<< data_map_target()" << std::endl;
 
+#if 0
     target_start = oam_timestamp();
     if (use_sym_heap) {
       sym_alloc_target(sym_heap_a_size, sym_heap_b_size);
@@ -132,7 +125,10 @@ int main(int argc, char *argv[])
                      *(symmetric_heap_a + buffer_size_a + v) )
                 << " ";
     }
-    std::cout << std::endl;
+#endif
+
+    std::cout << "Finalizing symmetric heap" << std::endl;
+    oam_vsmem__symmetric_free(symmetric_heap_a);
   }
 
   /* ---------------------------------------------------------------------- *
@@ -145,13 +141,8 @@ int main(int argc, char *argv[])
    * Finalize:                                                              *
    * ---------------------------------------------------------------------- */
 
-  if (use_sym_heap) {
-    oam_vsmem__symmetric_free(symmetric_heap_a);
-    oam_vsmem__symmetric_free(symmetric_heap_b);
-  } else {
-    free(symmetric_heap_a);
-    free(symmetric_heap_b);
-  }
+  oam_vsmem__symmetric_free(in_buffer);
+  oam_vsmem__symmetric_free(out_buffer);
 
   return EXIT_SUCCESS;
 }

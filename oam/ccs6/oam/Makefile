@@ -8,6 +8,8 @@ OA_SHELL_TMP_FILES		= *.out __TI_CLACC_KERNEL.c *.cl *.asm *.dsp_h \
 
 export LC_ALL=C
 
+export TARGET_ROOTDIR=$(shell 	${MV460_BASE}/portoam/set_target_root.sh )
+
 UNAME_M :=$(shell uname -m)
 ifneq (,$(findstring x86, $(UNAME_M)))
  ifeq ($(TARGET_ROOTDIR),)
@@ -18,33 +20,38 @@ endif
 ifeq ($(TI_OCL_CGT_INSTALL),)
   TI_OCL_CGT_INSTALL = $(TARGET_ROOTDIR)/usr/share/ti/cgt-c6x
 endif
+export TI_OCL_CGT_INSTALL
 
+
+ifeq (1, $(log))
+MV_LOGGING_FLAGS			= -DENABLE_LOGGING
+endif
 
 ifeq (1,$(verbose))
 OA_SHELL_VERBOSE_OPTS = --show_cc_opts -v -k
 endif
 ifeq (DEBUG, $(buildtype))
 OA_SHELL_DEBUG_OPTS		= -d -p -g
-CC_DFLAGS             = -DDEBUG
-
-											#	-DMV_LOG__ENABLED
-											#	-DMV_LOG__OAM__VSMEM
-											# -DMV_LOG__OAM__COMM
+CC_DFLAGS							= -DDEBUG -O0
 else
-CC_DFLAGS							= -DNDEBUG
+CC_DFLAGS							= -DNDEBUG -O3
 endif
 
 OA_SHELL_FLAGS				= $(OA_SHELL_VERBOSE_OPTS) $(OA_SHELL_DEBUG_OPTS)
-INCLUDE_PATHS					= -I./_inc \
-												-I../_inc \
-												-I../vs130/_inc \
-												-I../../vs130/_inc \
-												-I../sysdefs/_inc \
-												-I../../sysdefs/_inc \
-												-I../basefw/_inc \
-												-I../../basefw/_inc
+INCLUDE_PATHS					= -I${MV460_BASE}/oam/_inc \
+												-I${MV460_BASE}/sysdefs/_inc \
+												-I../.. \
+												-I../../../_inc \
+												-I../../_inc \
+												-I${MV460_BASE}/common/_inc \
+												-I${MV460_BASE}/portoam/_inc \
+												-I${MV460_BASE}/portoam/_inc/portoam \
+												-I${MV460_BASE}/vs130/_inc \
+												-I${MV460_BASE}/basefw/_inc
 
-CPPFLAGS						 := $(CPPFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS)
+CPPFLAGS						 := $(CPPFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS) \
+												-DOMPACC \
+												-fopenmp
 CFLAGS							 := $(CFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS)
 
 OA_TC_OPTS						= $(INCLUDE_PATHS) $(CC_DFLAGS)
@@ -63,7 +70,7 @@ OA_SHELL_OPTS					= $(OA_SHELL_FLAGS) \
 
 OA_SHELL_LIB_OPTS			= $(OA_SHELL_OPTS) --make_lib
 
-SOURCE_DIR						= ../_src
+SOURCE_DIR						= ../../../_src
 LIB_DIR								= ./
 BUILD_DIR							= build
 
@@ -75,7 +82,8 @@ TARGET_CODE						=	$(SOURCE_DIR)/oam_comm.c \
 
 HOST_OBJS							= $(patsubst $(SOURCE_DIR)/%.c, $(BUILD_DIR)/%.o, $(HOST_CODE))
 
-LIB										= ${LIB_DIR}/liboam.a
+LIB_NAME							= oamOAM
+LIB										= ${LIB_DIR}/lib${LIB_NAME}.a
 
 all: $(LIB_DIR) $(BUILD_DIR) $(LIB)
 
@@ -111,4 +119,9 @@ clean:
 	@rm -f $(LIB_DIR)/*.o
 	@rmdir $(LIB_DIR) >/dev/null 2>&1 || true
 	@rm -f $(LIB) $(OA_SHELL_TMP_FILES) *.log
+
+# this target is called "incl. PostBuild" from the ccs projects
+allwithcopy: all
+	-bash -c 'mkdir ${MV460_BASE}/MV4xx/ccs6/oam/_lib_gen_mv_${cfg} 2>/dev/null || exit 0'
+	cp -v lib${LIB_NAME}.a ${MV460_BASE}/MV4xx/ccs6/oam/_lib_gen_mv_${cfg}/
 
