@@ -86,15 +86,15 @@ int main(int argc, char *argv[])
    * Run kernels on DSPs and record time to completion at host:             *
    * ---------------------------------------------------------------------- */
 
+  std::cout << "Initializing symmetric heap" << std::endl;
+  symmetric_heap_a = (char *)(oam_vsmem__symmetric_malloc(sym_heap_a_size));
+  oam_vsmem__symmetric_heap_init(symmetric_heap_a, sym_heap_a_size);
+
   /* Kernel execution time in single repeats for median and stddev: */
   std::vector<double> oam_target_map_durations;
   std::vector<double> oam_sym_alloc_durations;
   for (int i = 0; i < num_repeat; i++) {
     ts_t target_start;
-
-    std::cout << "Initializing symmetric heap" << std::endl;
-    symmetric_heap_a = (char *)(oam_vsmem__symmetric_malloc(sym_heap_a_size));
-    oam_vsmem__symmetric_heap_init(symmetric_heap_a, sym_heap_a_size);
 
     for (int i = 0; i < buffer_size_a; i++) {
       in_buffer[i]  = i % buffer_size_a;
@@ -127,9 +127,10 @@ int main(int argc, char *argv[])
     }
 #endif
 
-    std::cout << "Finalizing symmetric heap" << std::endl;
-    oam_vsmem__symmetric_free(symmetric_heap_a);
   }
+
+  std::cout << "Finalizing symmetric heap" << std::endl;
+  oam_vsmem__symmetric_free(symmetric_heap_a);
 
   /* ---------------------------------------------------------------------- *
    * Finalize:                                                              *
