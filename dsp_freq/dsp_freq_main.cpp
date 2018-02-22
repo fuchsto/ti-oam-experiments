@@ -84,15 +84,20 @@ int main(int argc, char *argv[])
   std::vector<double> target_durations;
   std::future<int>    target_future;
 
+  std::cout << "---- cancellation ms: -c  " << cancel_after_ms  << '\n';
+  std::cout << "---- timeout ms:      -to " << timeout_after_ms << '\n';
+
   if (timeout_after_ms) {
-     oam_task__set_default_timeout(timeout_after_ms);
+     oam_task__set_default_timeout(timeout_after_ms * 1000);
   }
 
-  target_measurements measurements = { };
+  target_measurements msr = { };
+
+  auto ts_start = std::chrono::system_clock::now();
 
   std::thread target_thread(
                 target_task
-                , &measurements
+                , &msr
                 , host_signals);
 
   if (cancel_after_ms) {
@@ -106,7 +111,43 @@ int main(int argc, char *argv[])
   }
 
   target_thread.join();
-  std::cout << "Target exit code:      " << host_signals->ret << std::endl;
+
+  auto ts_end = std::chrono::system_clock::now();
+
+  auto target_lat_ms = std::chrono::duration_cast<std::chrono::microseconds>(
+                          ts_end - ts_start
+                       ).count();
+
+  auto target_duration = (msr.host_omp_wtime_end - msr.host_omp_wtime_start);
+
+  std::cout << "Target exit code:           " << host_signals->ret
+            << '\n';
+  std::cout << "Task latency:               " << target_lat_ms
+            << '\n';
+     
+  std::cout << "---> target_clock64_count   " << msr.target_clock64_count
+            << '\n';
+  std::cout << "---> target_omp_wtime_start " << msr.target_omp_wtime_start
+            << '\n';
+  std::cout << "---> target_omp_wtime_end   " << msr.target_omp_wtime_end
+            << '\n';
+  std::cout << "---> host_omp_wtime_start   " << msr.host_omp_wtime_start
+            << '\n';
+  std::cout << "---> host_omp_wtime_end     " << msr.host_omp_wtime_end
+            << '\n';
+
+  std::cout << "----------------------------\n";
+  std::cout << "task execution time measured on target: "
+            << (msr.target_omp_wtime_end - msr.target_omp_wtime_start)
+            << '\n';
+  std::cout << "task execution time measured on host:   "
+            << (msr.host_omp_wtime_end - msr.host_omp_wtime_start)
+            << '\n';
+  std::cout << "target CPU frequency:                   "
+            << ( (static_cast<double>(msr.target_clock64_count)
+                   / target_duration)
+                 * 1.0e-6 )
+            << std::endl;
 
   /* ---------------------------------------------------------------------- *
    * Finalize:                                                              *
