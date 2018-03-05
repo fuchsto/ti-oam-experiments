@@ -1,12 +1,11 @@
 
 #include "poll_cancel_target.h"
 
-#include <base/oam_config.h>
-#include <base/oam_types.h>
-#include <base/oam_task.h>
-#include <base/oam_task_target.h>
-#include <base/logging.h>
-#include <base/macro.h>
+#include <oam/oam_types.h>
+#include <oam/oam_task.h>
+#include <oam/oam_task_target.h>
+#include <oam/logging.h>
+#include <oam/macro.h>
 
 /* ======================================================================== *
  * Begin of Target Function Declarations and Includes                       *
@@ -17,7 +16,7 @@
 #include <stdio.h>
 #include <omp.h>
 
-#include <base/oam_time.h>
+#include <oam/oam_time.h>
 
 #include "ti_omp_device.h"
 
@@ -37,16 +36,21 @@ int target_function(
 {
   const int device_num = 0;
   int timeout_in_ms    = host_signals->timeout_after_us / 1000;
+  int timeout_aborted  = 0;
+
+  ts_t target_start_ts = omp_get_wtime();
+  ts_t target_end_ts;
+
+  int acc;
+  int i;
+  int r;
 
   wno_unused_var_(repeats);
   
   __ti_set_default_timeout(device_num, timeout_in_ms);
 
-  LOG_DEBUG("target_function: timeout: %d ms", timeout_in_ms);
+  LOG_WARN("target_function: timeout: %d ms", timeout_in_ms);
 
-  int acc;
-  int i;
-  int r;
   #pragma omp target data map(to:     in_buffer[0:size], size) \
                           map(from:   out_buffer[0:size], acc) \
                           map(tofrom: host_signals[0:1])
@@ -82,6 +86,14 @@ int target_function(
 //  oam_task__step(host_signals);
   } // omp target data
 
-  return __ti_get_timeout_status(device_num);
+  target_end_ts = omp_get_wtime();
+
+  timeout_aborted    = __ti_get_timeout_status(device_num);
+
+  LOG_WARN("target_function: timeout status: %d", timeout_aborted);
+  LOG_WARN("target_function: task execution time: %f ms",
+           (target_end_ts - target_start_ts) * 1000.0);
+
+  return timeout_aborted;
 }
 

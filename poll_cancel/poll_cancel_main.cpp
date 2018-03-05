@@ -1,9 +1,9 @@
 
-#include <base/oam_types.h>
-#include <base/oam_time.h>
-#include <base/oam_vsmem.h>
-#include <base/oam_comm.h>
-#include <base/oam_task.h>
+#include <oam/oam_types.h>
+#include <oam/oam_time.h>
+#include <oam/oam_vsmem.h>
+#include <oam/oam_comm.h>
+#include <oam/oam_task.h>
 
 #include "poll_cancel_target.h"
 

@@ -26,13 +26,11 @@ void oam_task__request_cancel(
       return;
   }
 
-//#pragma omp target update from(host_signals[0:1])
-//;
-
   #pragma omp target map(from: host_signals[0:1])
   {
-    LOG_WARN("oam_task__request_cancel: target start time: %ld us",
-             host_signals->time_start_us);
+    LOG_TARGET_WARN(
+        "oam_task__request_cancel: target start time: %ld us",
+        host_signals->time_start_us);
     host_signals->cancel           = 1;
     host_signals->ret              = OMPACC_TASK__CANCEL;
     host_signals->timeout_after_us = 1;
@@ -46,7 +44,6 @@ void oam_task__request_timeout(
   if (!host_signals) {
       return;
   }
-
   // Prevent double cancellation: the DSP might already
   // be in the process of unloading mapped data, including
   // host_signals
@@ -54,16 +51,13 @@ void oam_task__request_timeout(
       LOG_WARN("oam_task__request_timeout: Ignored, cancel request active");
       return;
   }
-
-//#pragma omp target update from(host_signals[0:1])
-//;
-
   #pragma omp target map(from: host_signals[0:1])
   {
     host_signals->timeout_after_us = timeout_us;
-    LOG_TARGET_INFO("oam_task__request_timeout: %ld us, target start time: %ld us",
-                     host_signals->timeout_after_us,
-                     host_signals->time_start_us);
+    LOG_INFO(
+        "oam_task__request_timeout: %ld us, target start time: %ld us",
+        host_signals->timeout_after_us,
+        host_signals->time_start_us);
   }
 }
 
@@ -88,42 +82,14 @@ void oam_task__step(
 void oam_task__finalize(
   HostMessage * host_signals)
 {
-#ifdef OMPACC
-  const int device_num = 0;
-  int       aborted    = __ti_get_timeout_status(device_num);
-
-  LOG_INFO("oam_task__finalize: __ti_get_timeout_status(0) - %d",
-           aborted);
+#if defined(MV_LOG__ENABLED)
+  ts_t target_time_now_s = 0;
 #endif
+
   if (!host_signals) {
     return;
   }
 
   host_signals->targets_entered--;
-#ifdef OMPACC
-  // Set cancellation condition at the very end:
-  if (aborted) {
-      host_signals->ret = OMPACC_TASK__TIMEOUT;
-  }
-#endif
 }
 
-void oam_task__set_default_timeout(long timeout_us)
-{
-#if defined(OMPACC)
-    const int device_num    = 0;
-    const int cancel_lat_ms = 30;
-    int freq_scale          = oam_config()->target_freq_scale;
-    int timeout_ms          = timeout_us / (freq_scale > 0 ? freq_scale : 1000);
-
-    if (timeout_ms < 0) {
-        LOG_HOST_INFO("oam_task__set_default_timeout: disable timeout (%d)", timeout_ms);
-        timeout_ms = 0;
-    } else if (timeout_ms > cancel_lat_ms) {
-       timeout_ms -= cancel_lat_ms;
-    }
-
-    LOG_HOST_INFO("oam_task__set_default_timeout: __ti_set_default_timeout(%d)", timeout_ms);
-    __ti_set_default_timeout(device_num, timeout_ms);
-#endif
-}

@@ -14,13 +14,13 @@ typedef enum OMPAccTaskRet_t
 
 typedef struct HostMessage_t
 {
+  int           param;
   int           cancel;
   int           targets_entered;
-  long          time_start_us;
   long          timeout_after_us;
+  long          time_start_us;
   long          poll_interval_us;
   long          last_poll_time_us[OAM_TASK__MAX_THREADS];
-  int           param;
   OMPAccTaskRet ret;
 } HostMessage;
 

@@ -11,8 +11,8 @@ CC_DFLAGS             = -DNDEBUG
 endif
 
 OA_SHELL_FLAGS  = $(OA_SHELL_VERBOSE_OPTS) $(OA_SHELL_DEBUG_OPTS)
-INCLUDE_PATHS   = -I$(PWD)/include -I../base/_inc/
-LIBRARY_PATHS   = -L$(PWD)../base/_lib -L$(PWD)
+INCLUDE_PATHS   = -I$(PWD)/include -I../oam/_inc/
+LIBRARY_PATHS   = -L$(PWD)../oam/_lib -L$(PWD)
 
 CL                    = cl6x $(INCLUDE_PATHS)
 OA_SHELL              = clacc
@@ -25,7 +25,7 @@ export LC_ALL=C
 
 # CC_ARM_OPTS     = -march=armv7-a -mtune=cortex-a15 -mfloat-abi=hard -mfpu=vfp
 
-CPPFLAGS       := $(CPPFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS) $(CC_ARM_OPTS) -std=c++11
+CPPFLAGS       := $(CPPFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS) $(CC_ARM_OPTS) -std=c++11 -fopenmp
 CFLAGS         := $(CFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS)
 
 OA_TC_OPTS      = $(INCLUDE_PATHS) $(CC_DFLAGS)
@@ -52,8 +52,8 @@ $(EXE): $(OBJS) $(BASE_OAM_LIB)
 	$(OA_SHELL) $(OA_SHELL_OPTS) $(OBJS) $(BASE_OAM_LIB) $(TARGET_CODE) -o $@
 
 $(BASE_OAM_LIB):
-	$(MAKE) -C ../base
-	@cp ../base/_lib/*.a .
+	$(MAKE) -C ../oam
+	@cp ../oam/_lib/*.a .
 
 %.o: %.c
 	@echo "=="

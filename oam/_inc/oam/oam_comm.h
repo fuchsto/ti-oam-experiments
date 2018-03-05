@@ -33,12 +33,6 @@ void oam_comm__host_signals_delete(
   HostMessage * host_signals);
 
 /**
- * Notify targets of changes on the referenced host message.
- */
-void oam_comm__flush_signals(
-  HostMessage * host_signals);
-
-/**
  * Synchronize host data at target.
  * To be called between offload sections in target tasks.
  */
@@ -72,6 +66,12 @@ void __cache_l2_flush(void);
 void __cache_l1d_flush(void);
 
 /**
+ * Notify targets of changes on the referenced host message.
+ */
+void oam_comm__flush_signals(
+  HostMessage * host_signals);
+
+/**
  * Tests if the current thread's poll interval has been reached.
  *
  * If at least <tt>host_signals->poll_interval_ms</tt> ms have been elapsed
@@ -84,7 +84,7 @@ int oam_comm__poll_interval(
 int oam_comm__poll_message(
   /// The task's start timestamp in seconds, usually obtained from
   /// \c omp_get_wtime().
-  double        time_start,
+  long          time_start,
   /// The task's host signals handle.
   HostMessage * host_signals);
 

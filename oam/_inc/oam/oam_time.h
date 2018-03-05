@@ -1,23 +1,22 @@
 #ifndef OAM__OAM_TIME_H__INCLUDED
 #define OAM__OAM_TIME_H__INCLUDED
 
+#pragma omp declare target
+#  include <omp.h>
+#  include "ti_omp_device.h"
+#pragma omp end declare target
+
 #if !defined(_OPENMP) && defined(ARMLINUX)
 // #pragma message "Using clock_gettime in oam_timestamp"
 #  include <time.h>
 #  include <sched.h>
 #  include <sys/time.h>
-#else
-#pragma omp declare target
-#  include <omp.h>
-#  if defined(OMPACC_TARGET)
-#    include "ti_omp_device.h"
-#  endif
-#pragma omp end declare target
 #endif
 
 #include <oam/oam_types.h>
 
 #pragma omp declare target
+double omp_get_wtime(void);
 typedef double ts_t;
 static inline ts_t oam_timestamp();
 #pragma omp end declare target

@@ -22,4 +22,25 @@
  */
 #define OAM__SYMMETRIC_MEMORY__USE_DDR
 
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct OMPAccConfig_s {
+  int offloading_enabled;
+  int target_freq_scale;
+  int target_base_freq;
+} OMPAccConfig;
+
+
+const OMPAccConfig * oam_config();
+void                 oam_config__init();
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
+
+
 #endif // OAM__CONFIG_H_
