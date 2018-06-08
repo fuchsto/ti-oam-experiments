@@ -159,7 +159,7 @@ int main(int argc, char *argv[])
             << "Setting param to 555" << std::endl;
   host_signals->param  = 555;
 
-  oam_comm__flush_signals(host_signals);
+  // oam_comm__flush_signals(host_signals);
 
   /* Computation at host parallel to target task: */
   computation_at_host(params.array_size / 2 * params.num_host_repeat);

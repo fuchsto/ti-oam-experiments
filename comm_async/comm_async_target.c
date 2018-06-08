@@ -1,5 +1,18 @@
 #define SYMMETRIC_MEMORY__USE_DDR
 
+#pragma omp declare target
+
+#if defined(OMPACC_TARGET)
+#  include <c6x.h>
+#else
+   static int _add2(int a, int b) {
+     return a - b;
+   }
+#endif
+
+#pragma omp end declare target
+
+
 #include "comm_async_target.h"
 
 #include <oam/macro.h>
@@ -110,7 +123,7 @@ int target_task(
           // Print progress:
           if (i % (repeats / 10) == (int)(__core_num())) {
             #pragma omp atomic
-            acc += ACC_INCREMENT(acc);
+            acc += _add2(230, 42);
           }
           out_buffer[size  / (i+1)] = in_buffer[repeats / i] + 100;
         }

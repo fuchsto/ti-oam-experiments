@@ -24,12 +24,14 @@ OA_SHELL_TMP_FILES    = *.out __TI_CLACC_KERNEL.c *.cl *.asm *.dsp_h \
 
 export LC_ALL=C
 
-# CC_ARM_OPTS     = -mtune=cortex-a15 -mfloat-abi=hard -mfpu=vfp
+CC_ARM_OPTS     = -mtune=cortex-a15 -mfloat-abi=hard -mfpu=neon-vfpv4
 
 CPPFLAGS						 := $(CPPFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS) -DOMPACC
 CFLAGS							 := $(CFLAGS) $(INCLUDE_PATHS) $(CC_DFLAGS)
+CXXFLAGS             := $(CXXFLAGS) -fopenmp
 
-OA_TC_OPTS      = $(INCLUDE_PATHS) $(CC_DFLAGS) -DOMPACC
+OA_TC_OPTS      = $(INCLUDE_PATHS) $(CC_DFLAGS) -DOMPACC \
+									-fopenmp
 OA_HC_OPTS      = $(INCLUDE_PATHS) $(CC_DFLAGS) -DOMPACC $(CC_ARM_OPTS) \
 									-Wall -Wextra -fopenmp -ffast-math
 
