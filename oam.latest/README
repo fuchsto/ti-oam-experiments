@@ -1,0 +1,9 @@
+
+For the complete OpenMP interface provided by the TI OAM port, see:
+
+- <TI-SDK>/targetNFS/usr/share/ti/openmpacc/dsp/include/omp.h
+- <TI-SDK>/targetNFS/usr/share/ti/openmpacc/dsp/include/ti_omp_device.h
+
+... and documentation within these headers.
+
+

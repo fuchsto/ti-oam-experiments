@@ -1,4 +1,6 @@
 
+#include <sysdefs/qualifier.h>
+
 #include <oam/logging.h>
 #include <oam/oam_vsmem.h>
 #include <oam/oam_config.h>
@@ -24,6 +26,7 @@
  */
 
 #pragma omp declare target
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -33,9 +36,8 @@
 
 #include <omp.h>
 
-#if defined(OMPACC)
 #include "ti_omp_device.h"
-#endif
+
 
 #if defined(OMPACC)
 int EXTERNAL_ALGO_MEMORY = EXTERNAL_MEMORY;
@@ -59,6 +61,24 @@ int EXTERNAL_ALGO_MEMORY = EXTERNAL_MEMORY;
 
 #pragma omp end declare target
 
+
+
+
+
+// #define MV_OAM__VSMEM__MALLOC_FALLBACK
+#ifdef MV_OAM__VSMEM__MALLOC_FALLBACK
+#  define VSMEM_getMem(segid, size, tag) \
+          malloc(size)
+#  define VSMEM_freeMem(pMem) \
+          free(pMem)
+#  define VSMEM_getAlignedMem(mem_space, nbytes, tag, align, init_val) \
+          aligned_alloc(align, nbytes);
+#endif
+
+
+
+
+
 #if defined(MV_LOG__OAM__VSMEM)
   #warning Excessive OMP memory management debug output enabled
 #else
@@ -71,8 +91,7 @@ void * oam_vsmem__set(
   const unsigned char   value,
   unsigned long         nbytes)
 {
-  LOG_DEBUG("oam_vsmem__set: dst:(%p) value:(%d) nbytes:(%lu)",
-            dst, value, nbytes);
+  LOG_DEBUG("oam_vsmem__set: dst:(%p) value:(%d) nbytes:(%lu)", dst, value, nbytes);
 
   return memset(dst, value, nbytes);
 }
@@ -106,19 +125,20 @@ int oam_vsmem__compare(
 int oam_vsmem__freeMem(
   void                * pMem)
 {
-  if (NULL == pMem) {
+  if (NULL == pMem)
+  {
     LOG_DEBUG("oam_vsmem__freeMem(%p) -> failed (-1)", pMem);
     return -1;
   }
 #if defined(OMPACC)
   oam_vsmem__symmetric_free(pMem);
 #else
-  return VSMEM_freeMem(pMem);
+  VSMEM_freeMem(pMem);
 #endif
   return 1;
 }
 
-#if MEMORY_DEBUG_SUPPORTED
+#if defined(MEMORY_DEBUG_SUPPORTED) && MEMORY_DEBUG_SUPPORTED != 0
 int oam_vsmem__freeMemDebug(
   void                * pMem)
 {
@@ -135,7 +155,7 @@ int oam_vsmem__freeMemDebug(
 int oam_vsmem__freeTag(
   oam_vsmem__eMemTag    tag)
 {
-  LOG_DEBUG("oam_vsmem__freeTag: tag:(%dp)", tag);
+  LOG_WARN("oam_vsmem__freeTag: Not implemented for OAM memory managmement! tag:(%dp)", tag);
 #if defined(OMPACC)
   return 1;
 #else
@@ -143,12 +163,14 @@ int oam_vsmem__freeTag(
 #endif
 }
 
-void * oam_vsmem__getMem(
+void * MV__ALIGNED_POINTER(8) oam_vsmem__getMem(
   int                   segid,
   unsigned long         size,
   oam_vsmem__eMemTag    tag)
 {
-  void* pmem = 0;
+  void * MV__ALIGNED_POINTER(8) pmem = 0;
+
+  LOG_DEBUG("oam_vsmem__getMem() size:(%lu)", size);
 
 #if defined(OMPACC)
   pmem = oam_vsmem__getAlignedMem(segid, size, tag, 8, NULL);
@@ -159,17 +181,17 @@ void * oam_vsmem__getMem(
   return pmem;
 }
 
-void * oam_vsmem__getAlignedMem(
+void * MV__ALIGNED_POINTER(MV__MIN_ALIGN) oam_vsmem__getAlignedMem(
   int                   segid,
   unsigned long         size,
   oam_vsmem__eMemTag    tag,
   unsigned int          align,
   const char          * pinitializer)
 {
-  LOG_DEBUG("oam_vsmem__getAlignedMem() "
-            "segId:(%d) size:(%lu) tag:(%d) align:(%d), pInit:(%p)",
-            segid, size, tag, align, pinitializer);
-  void * pmem = NULL;
+  void * MV__ALIGNED_POINTER(MV__MIN_ALIGN) pmem = NULL;
+
+  LOG_DEBUG("oam_vsmem__getAlignedMem() segId:(%d) size:(%lu) tag:(%d) align:(%d), pInit:(%p)", segid, size, tag, align, pinitializer);
+
 #if defined(OMPACC)
   pmem = oam_vsmem__symmetric_memalign(align, size);
   if (pinitializer) {
@@ -177,6 +199,10 @@ void * oam_vsmem__getAlignedMem(
   }
 #else
   pmem = VSMEM_getAlignedMem(segid, size, tag, align, pinitializer);
+//pmem = aligned_alloc(align, size);
+  if (pinitializer) {
+      oam_vsmem__set(pmem, *pinitializer, size);
+  }
 #endif
   LOG_DEBUG("oam_vsmem__getAlignedMem > (%p)", pmem);
   return pmem;
@@ -188,14 +214,12 @@ void * oam_vsmem__getMultiMem(
   unsigned int          num,
   unsigned int          firstSize, ...)
 {
-  LOG_DEBUG("oam_vsmem__getMultiMem() "
-            "segId:(%d) tag:(%d) num:(%d) firstSize:(%d)",
-            segid, tag, num, firstSize);
-
   va_list      args;
   unsigned int totalsize = (firstSize + 7) & 0xFFFFFFF8;
-  void *       baseptr;
+  void *  MV__ALIGNED_POINTER(8) baseptr;
   unsigned int i;
+
+  LOG_DEBUG("oam_vsmem__getMultiMem() segId:(%d) tag:(%d) num:(%d) firstSize:(%d)", segid, tag, num, firstSize);
 
   va_start(args, firstSize);
   for (i = 1; i < num; i++) {
@@ -261,7 +285,7 @@ void * oam_vsmem__symmetric_malloc(
 #else
   pmem = VSMEM_getMem(EXTERNAL_MEMORY, nbytes, (VSMEM_eMemTag)ALGO_MEM);
 #endif
-  LOG_DEBUG("oam_vsmem__symmetric_malloc(nbytes:%lu) -> 0x%p", nbytes, pmem);
+  LOG_DEBUG("oam_vsmem__symmetric_malloc(nbytes:%lu) -> %p", nbytes, pmem);
   return pmem;
 }
 
@@ -282,7 +306,7 @@ void * oam_vsmem__symmetric_memalign(
   pmem = VSMEM_getAlignedMem(
            EXTERNAL_MEMORY, nbytes, (VSMEM_eMemTag)ALGO_MEM, align, NULL);
 #endif
-  LOG_DEBUG("oam_vsmem__symmetric_memalign(align:%u nbytes:%lu) -> 0x%p",
+  LOG_DEBUG("oam_vsmem__symmetric_memalign(align:%u nbytes:%lu) -> %p",
             align, nbytes, pmem);
   return pmem;
 }
@@ -297,14 +321,14 @@ void * oam_vsmem__symmetric_scratch_malloc(
 #else
   pmem = VSMEM_getMem(EXTERNAL_MEMORY, nbytes, (VSMEM_eMemTag)ALGO_MEM);
 #endif
-  LOG_DEBUG("oam_vsmem__symmetric_scratch_malloc(nbytes:%lu) -> 0x%p", nbytes, pmem);
+  LOG_DEBUG("oam_vsmem__symmetric_scratch_malloc(nbytes:%lu) -> %p", nbytes, pmem);
   return pmem;
 }
 
 void oam_vsmem__symmetric_free(
   void         * pmem)
 {
-  LOG_DEBUG("oam_vsmem__symmetric_free(0x%p)", pmem);
+  LOG_DEBUG("oam_vsmem__symmetric_free(%p)", pmem);
   if (pmem == NULL) { return; }
 #if defined(OMPACC)
 # ifdef SYMMETRIC_MEMORY__USE_DDR
@@ -313,7 +337,7 @@ void oam_vsmem__symmetric_free(
   __free_msmc(pmem);
 # endif
 #else
-  LOG_DEBUG("oam_vsmem__symmetric_free(0x%p) -> free", pmem);
+  LOG_DEBUG("oam_vsmem__symmetric_free(%p) -> free", pmem);
   VSMEM_freeMem(pmem);
 #endif
 }
@@ -321,12 +345,12 @@ void oam_vsmem__symmetric_free(
 void oam_vsmem__symmetric_scratch_free(
   void         * pmem)
 {
-  LOG_DEBUG("oam_vsmem__symmetric_scratch_free(0x%p)", pmem);
+  LOG_DEBUG("oam_vsmem__symmetric_scratch_free(%p)", pmem);
   if (pmem == NULL) { return; }
 #if defined(OMPACC)
   __free_msmc(pmem);
 #else
-  LOG_DEBUG("oam_vsmem__symmetric_scratch_free(0x%p) -> free", pmem);
+  LOG_DEBUG("oam_vsmem__symmetric_scratch_free(%p) -> free", pmem);
   VSMEM_freeMem(pmem);
 #endif
 }
@@ -340,7 +364,7 @@ void oam_vsmem__symmetric_heap_init(
   char * pmem_c = (char *)(pmem);
   #pragma omp target map(to: nbytes, pmem_c[0:nbytes])
   {
-    LOG_DEBUG("oam_vsmem__heap_init(0x%p, %lu)", pmem, nbytes);
+    LOG_DEBUG("oam_vsmem__heap_init(%p, %lu)", pmem, nbytes);
 # ifdef SYMMETRIC_MEMORY__USE_DDR
     __heap_init_ddr((char *)(pmem_c), nbytes);
 # else
@@ -388,6 +412,7 @@ void * oam_vsmem__local_malloc(
   OAM_VSMEM__LOCAL_ALLOC_TYPE atype)
 {
   char * local_pmem = NULL;
+  LOG_DEBUG("oam_vsmem__local_malloc %d bytes", nbytes);
 #if defined(OMPACC)
   if (atype == ALLOC_TARGET) {
     #pragma omp target map(to:nbytes) map(local:local_pmem[0:nbytes])
