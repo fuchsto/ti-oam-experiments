@@ -1,6 +1,12 @@
 #ifndef OAM__OAM_TASK_H__INCLUDED
 #define OAM__OAM_TASK_H__INCLUDED
 
+/**
+ * \file oam_task.h
+ *
+ * OAM host-side task interface.
+ */
+
 #include <oam/oam_types.h>
 #include <oam/oam_comm.h>
 #include <oam/logging.h>

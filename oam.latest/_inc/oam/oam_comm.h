@@ -1,6 +1,12 @@
 #ifndef OAM__OAM_COMM_H__INCLUDED
 #define OAM__OAM_COMM_H__INCLUDED
 
+/**
+ * \file oam_comm.h
+ *
+ * OAM host/target communication.
+ */
+
 #include <oam/oam_types.h>
 
 #if defined(OMPACC)
@@ -15,10 +21,16 @@
 extern "C" {
 #endif
 
-
+/**
+ * Constructor of `HostMessage`.
+ *
+ */
 HostMessage * oam_comm__host_signals_init(
   HostMessage * host_mesg,
+  /// Message poll interval in microseconds. Tradeoff between cancellation
+  /// latency and polling overhead.
   long poll_interval_us,
+  /// Timeout period in microseconds.
   long timeout_after_us);
 
 /**
@@ -26,12 +38,15 @@ HostMessage * oam_comm__host_signals_init(
  * poll interval and timeout, in milliseconds.
  */
 HostMessage * oam_comm__host_signals_new(
+  /// Message poll interval in microseconds. Tradeoff between cancellation
+  /// latency and polling overhead.
   long poll_interval_us,
+  /// Timeout period in microseconds.
   long timeout_after_us);
 
 
 /**
- * Deletes the specified host signals descriptor.
+ * Destructor of `HostMessage`, deletes the specified host signals descriptor.
  */
 void oam_comm__host_signals_delete(
   HostMessage * host_signals);
@@ -85,6 +100,10 @@ void oam_comm__flush_signals(
 int oam_comm__poll_interval(
   HostMessage * host_signals);
 
+/**
+ * Message poll request. Updates specified `HostMessage` object if
+ * a polling period has passed since the timestamp specified in `time_start`.
+ */
 int oam_comm__poll_message(
   /// The task's start timestamp in seconds, usually obtained from
   /// \c omp_get_wtime().

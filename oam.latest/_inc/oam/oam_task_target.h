@@ -1,15 +1,15 @@
 #ifndef OAM__OAM_TASK_TARGET_H__INCLUDED
 #define OAM__OAM_TASK_TARGET_H__INCLUDED
 
+/**
+ * \file oam_task_target.h
+ *
+ * OAM target-side task interface.
+ */
+
 #include <oam/oam_task.h>
 #include <oam/oam_types.h>
 #include <oam/macro.h>
-
-// #pragma omp declare target
-// #include <dsp_c.h>
-// #include "ti/sysbios/BIOS.h"
-// #include "ti/sysbios/knl/Task.h"
-// #pragma omp end declare target
 
 /**
  * \brief Cancellation checkpoint in decoder task section.

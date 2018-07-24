@@ -1,6 +1,13 @@
 #ifndef OAM__OAM_TIME_H__INCLUDED
 #define OAM__OAM_TIME_H__INCLUDED
 
+/**
+ * \file oam_time.h
+ *
+ * Unified time measurement routines usable in both host and target
+ * code.
+ */
+
 #pragma omp declare target
 #  include <omp.h>
 #  if defined(OMPACC)

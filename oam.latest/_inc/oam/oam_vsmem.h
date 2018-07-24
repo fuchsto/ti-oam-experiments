@@ -1,6 +1,12 @@
 #ifndef OAM__OAM_VSMEM_H__INCLUDED
 #define OAM__OAM_VSMEM_H__INCLUDED
 
+/**
+ * \file oam_vsmem.h
+ *
+ * Unified memory management routines usable in host- and target code.
+ */
+
 #include <sysdefs/qualifier.h>
 
 
