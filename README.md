@@ -30,6 +30,8 @@ the DSP system.
 
 ### comm\_async
 
+**Synopsis**
+
 Evaluates task cancelation latency from a series of target tasks, reports
 min/max/mean/sdev.
 
@@ -59,6 +61,8 @@ Example usage:
 
 ### concurrent
 
+**Synopsis**
+
 Evaluates concurrent execution of two target tasks executed using C++11
 asynchronous launch policies.
 
@@ -78,6 +82,15 @@ behavior of the OMPACC subsystem in this defect scenario.
 
 ### dsp\_img\_filter
 
+**Synopsis**
+
+Evaluation of offload overhead (latency, memory, time to completion)
+depending on work load and image size.
+
+Heavy-load, comparably complex target tasks on actual image data, aimed at a
+more realistig simulation of work loads and interaction (like memory
+offloading) of a productive application.
+
 **Options**
 
       -b <buffer size> Bytes to allocate per repetition
@@ -89,6 +102,13 @@ behavior of the OMPACC subsystem in this defect scenario.
 
 
 ### poll\_cancel
+
+**Synopsis**
+
+Evaluation of the target timeout features provided by extension developed by
+TI as a recent addition to the OMPACC runtime interface.
+
+**Executable**: `poll_cancel.bin`
 
 **Options**
 
@@ -104,9 +124,30 @@ behavior of the OMPACC subsystem in this defect scenario.
 
 ### static\_vars
 
+**Synopsis**
+
+Demonstrates calling static declared functions and variables local to the
+target code compilation unit in host code and in target regions.
+
+**Executable**: `static_vars.bin`
+
+**Options**
+
+      -b <buffer size> Bytes to allocate per repetition
+      -hr <num rep>    Number of repetitions at host
+      -tr <num rep>    Number of repetitions at target
+      -to <ms>         Timeout duration of target task in ms
+      -pi <ms>         Polling interval at target task in ms
+      -c               Cancel request after host task completion
+
 
 
 ### globvars
+
+**Synopsis**
+
+Demonstrates combination of global declaration variants such as accessing
+extern symbols declared in host code from target regions, and vice versa.
 
 **Options**
 
@@ -120,13 +161,13 @@ behavior of the OMPACC subsystem in this defect scenario.
 
 ### declare
 
-**Executable**: `declare.bin`
-
 **Synopsis**
 
 Demonstrates combination of declaration variants such as accessing static
 symbols declared in host code from target regions, external linkage,
 accessing symbols in nested declarations etc.
+
+**Executable**: `declare.bin`
 
 **Options**
 
@@ -140,6 +181,10 @@ accessing symbols in nested declarations etc.
 
 ### extlib\_linkage
 
+**Synopsis**
+
+Calling a target task implemented in an external library.
+
 **Options**
 
       -b <buffer size> Bytes to allocate per repetition
@@ -150,6 +195,10 @@ accessing symbols in nested declarations etc.
       -c               Cancel request after host task completion
 
 ### sym\_heap\_reset
+
+Initialization and resetting symmetric heap after every task iteration.
+Evaluates performance and stability of reallocating the symmetric heap
+after every task instead of re-using and only clearing its contents.
 
 **Options**
 
@@ -164,11 +213,13 @@ accessing symbols in nested declarations etc.
 
 ## Evaluation of OAM Builds
 
-
 ### hybrid\_lib
 
+Build setup example for building a hybrid OMPAC library (clacl).
 
 ### task\_extlib
+
+Build setup example for building target code in a separate external library.
 
 
 
