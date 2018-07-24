@@ -31,6 +31,8 @@ tags
 
 */.metadata
 
+*/doc/*
+
 # Project binaries
 
 *.int.c

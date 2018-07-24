@@ -1,6 +1,8 @@
 #ifndef OAM__OAM_PROFILING_H__INCLUDED
 #define OAM__OAM_PROFILING_H__INCLUDED
 
+#if 0
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -14,6 +16,8 @@ void __exit_hook(const char *name);
 
 #ifdef __cplusplus
 } /* extern "C" */
+#endif
+
 #endif
 
 #endif /* OAM__OAM_PROFILING_H__INCLUDED */

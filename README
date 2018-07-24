@@ -1,9 +1,0 @@
-
-To evaluate task cancelation latency, you can use:
-
-  $ ./comm_async.bin -b 102400 -hr 200 -tr 10000 -pi 1 -c
-
-`The comm_async application implements a non-trivial use
-case and should yield the most realistic measurements.
-
-

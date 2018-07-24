@@ -260,7 +260,7 @@ static void print_usage(const RunParams * params)
             << std::endl
             << "Running:"
             << std::endl
-            << "  comm_async.bin"
+            << "  declare.bin"
             << " -b "  << params->array_size
             << " -hr " << params->num_host_repeat
             << " -tr " << params->num_target_repeat

@@ -11,8 +11,9 @@
 #include <oam/oam_types.h>
 #include <oam/macro.h>
 
+#if DOXYGEN
 /**
- * \brief Cancellation checkpoint in decoder task section.
+ * Cancellation checkpoint in decoder task section.
  *
  * \code
  *   int  aborted    = 0;
@@ -28,6 +29,9 @@
  *     GOTO_LABEL_IF_CANCELLED);
  * \endcode
  */
+#  define OAM_TASK__CANCELLATION_CHECK(scope, ts,hs,a, goto_label)
+
+#else // DOXYGEN
 
 #if defined(OMPACC_TARGET)
 #  define OAM_TASK__CANCELLATION_CHECK(scope, ts,hs,a, goto_label) \
@@ -48,6 +52,7 @@
 #  define OAM_TASK__CANCELLATION_CHECK(scope, ts,hs,a, goto_label) do { } while(0)
 #endif
 
+#endif // DOXYGEN
 
 /* ======================================================================== *
  * Target Functions                                                         *
@@ -101,6 +106,9 @@ static inline int oam_task__poll_cancel_request(
 #pragma omp end declare target
 
 
+/**
+ * Host-side variant of `oam_task__poll_cancel_request`.
+ */
 static inline int oam_task__poll_cancel_request(
   long          time_start_us,
   HostMessage * host_signals,
