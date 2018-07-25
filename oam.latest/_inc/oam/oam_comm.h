@@ -54,9 +54,15 @@ void oam_comm__host_signals_delete(
 /**
  * Synchronize host data at target.
  * To be called between offload sections in target tasks.
+ *
+ * For implementation details, see:
+ *
+ * http://downloads.ti.com/mctools/esd/docs/opencl/memory/cache-operations.html
  */
 void oam_comm__update_target_data(
+  /// Pointer to memory range to synchronize.
   char         * host_data,
+  /// Size of synchronized memory range in bytes.
   unsigned int   num_bytes);
 
 /**
@@ -64,7 +70,9 @@ void oam_comm__update_target_data(
  * To be called between offload sections in target tasks.
  */
 void oam_comm__update_host_data(
+  /// Pointer to memory range to synchronize.
   char         * target_data,
+  /// Size of synchronized memory range in bytes.
   unsigned int   num_bytes);
 
 #ifdef __cplusplus
@@ -80,12 +88,17 @@ void oam_comm__update_host_data(
 // #include <stdio.h>
 
 // See:
+//
 // http://downloads.ti.com/mctools/esd/docs/opencl/memory/cache-operations.html
 // void __cache_l2_flush(void);
 // void __cache_l1d_flush(void);
 
 /**
  * Notify targets of changes on the referenced host message.
+ *
+ * For implementation details, see:
+ *
+ * http://downloads.ti.com/mctools/esd/docs/opencl/memory/cache-operations.html
  */
 void oam_comm__flush_signals(
   HostMessage * host_signals);
@@ -96,6 +109,10 @@ void oam_comm__flush_signals(
  * If at least <tt>host_signals->poll_interval_ms</tt> ms have been elapsed
  * since the last poll at thread \c t, returns \c 1 and
  * <tt>host_signals->last_poll_time_ms[t]</tt> is set to the current time.
+ *
+ * For implementation details, see:
+ *
+ * http://downloads.ti.com/mctools/esd/docs/opencl/memory/cache-operations.html
  */
 int oam_comm__poll_interval(
   HostMessage * host_signals);

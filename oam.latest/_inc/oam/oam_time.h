@@ -97,6 +97,13 @@ static inline ts_t oam_timestamp()
 #endif
 }
 
+/**
+ * Uniform function interface to obtain CPU tick count.
+ * 
+ * \note Ensure that no CPU frequency scaling occurs when tick counts are
+ *       used to measure a time span. Otherwise, ticks will not represent
+ *       values in a linear time domain.
+ */
 static inline ts_clk_t oam_clocktick()
 {
 #if defined(OMPACC_TARGET)

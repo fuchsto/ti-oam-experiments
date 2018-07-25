@@ -195,12 +195,19 @@ void * MV__ALIGNED_POINTER(MV__MIN_ALIGN) oam_vsmem__getAlignedMem(
   unsigned int          align,
   const char          * pinitializer);
 
+/**
+ * Allocate multiple memory reagions with specified sized using the same
+ * memory category (tag) for all memory reagions.
+ */
 void * oam_vsmem__getMultiMem(
   int                   segid,
   oam_vsmem__eMemTag    tag,
   unsigned int          num,
   unsigned int          firstSize, ...);
 
+/**
+ * Returns `1` if characters in the provided strings are identical..
+ */
 int oam_vsmem__strEq(
   const char          * string1,
   const char          * string2);

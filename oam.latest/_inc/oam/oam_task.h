@@ -70,7 +70,10 @@ static inline int oam_task__finalized(
   return 0;
 }
 
-
+/**
+ * Set timeout for the next target section. The timeout configuration is
+ * passed to the OMPACC runtime and has global effect.
+ */
 void oam_task__set_default_timeout(long timeout_us);
 
 
