@@ -25,10 +25,10 @@
 
 # Examples
 
-- IPC IPU core example code: \
+- IPC IPU core example code:
   ${TARGET_NFS}/usr/share/ti/ti-ipc-tree/packages/ti/ipc/tests/
 
-- IPC host example code: \
+- IPC host example code:
   ${TARGET_NFS}/usr/share/ti/ti-ipc-tree/linux/src/tests/
 
 
