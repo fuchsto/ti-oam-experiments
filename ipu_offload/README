@@ -18,9 +18,9 @@
 
 # Downloads
 
-- TI SDK RTOS (v3.3.0): \
+- TI SDK RTOS (v3.3.0):
   http://software-dl.ti.com/processor-sdk-rtos/esd/AM57X/03_03_00_04/index_FDS.html
-  M4 Example Project with IPC: \
+  M4 Example Project with IPC:
 - http://processors.wiki.ti.com/index.php/File:UART_BasicExample_evmAM572x_m4ExampleProject_with_ipc.zip
 
 # Examples
